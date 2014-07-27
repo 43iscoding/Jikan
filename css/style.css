@@ -1,0 +1,21 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    background-color: #000;
+}
+
+@font-face {font-family: Aoyagi; src: url("../res/AoyagiKouzan.ttf"); }
+
+#canvas {
+    display: block;
+    margin: auto;
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    
+    width: 320px;
+    height: 200px;
+	margin-left: -160px;
+	margin-top: -130px;
+}
