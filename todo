@@ -5,6 +5,11 @@ Engine:
 .Read & Optimize
 .Parallax background
 
+Content:
+.Sunflower
+.Seasons
+.Water freezing
+
 Art:
 .Player
 .Tiles
@@ -14,4 +19,3 @@ Art:
 Misc:
 .Full screen
 .Map from config
-
