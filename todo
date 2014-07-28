@@ -14,6 +14,10 @@ Art:
 .Tiles
 .Sunflower
 .Background
+.Season panel (Howl doorbell?)
+
+Refactor:
+.Move physics & season behaviour to separate file
 
 Misc:
 .Full screen
