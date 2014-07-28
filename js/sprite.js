@@ -9,14 +9,19 @@
         this.speed = speed;
         this.once = once == undefined ? false : once;
         this.lastState = STATE.IDLE;
+        this.stateFrames = frames[STATE.IDLE];
     }
 
     Sprite.prototype = {
         update: function (state) {
             if (this.speed == 0) return;
-            this.frame = state;
-            //this.index += (fps * this.speed) / 1000;
-            //this.frame = Math.floor(this.index) % this.frames;
+            if (state != this.lastState) {
+                this.stateFrames = this.frames[state];
+                this.index = 0;
+            }
+            this.index += (fps * this.speed) / 1000;
+            this.frame = this.stateFrames[0] + Math.floor(this.index) % this.stateFrames.length;
+            this.lastState = state;
         },
         reset: function () {
             this.index = 0;

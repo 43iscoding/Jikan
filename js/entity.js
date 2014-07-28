@@ -6,6 +6,7 @@ function Entity(x, y, width, height, type, sprite, args) {
     this.type = type;
     this.dead = false;
     this.sprite = new Sprite(res.get(sprite['name']), sprite['pos'], [width, height],
+            //frames is array of image per state
             sprite['frames'] == undefined ? [] : sprite['frames'],
             sprite['speed'] == undefined ? 0 : sprite['speed'],
             sprite['once'] == undefined ? false : sprite['once']);
@@ -110,7 +111,9 @@ window.STATE = {
 
 function Player(x, y) {
     var args = { velocity : 2, jump : 3.5 };
-    Entity.call(this, x, y, 22, 22, "player", {name : "player", pos : [0,0], frames: 1, speed: 2}, args);
+    Entity.call(this, x, y, 22, 22, "player", {name : "player", pos : [0,0],
+        frames: [[0], [1], [2], [3], [4], [5], [6], [7], [8], [9]],
+        speed: 2}, args);
 }
 Player.prototype = Object.create(Entity.prototype);
 
@@ -128,7 +131,7 @@ window.spawnGround = function (x, y, mode) {
     if (mode == undefined || mode < 0 || mode > 3) {
         mode = 0;
     }
-    var sprite = { name : "tiles", pos : [TILE_SIZE * mode, 0], frames: 1, speed: 0};
+    var sprite = { name : "tiles", pos : [TILE_SIZE * mode, 0], frames: [[0]], speed: 0};
     return new Block(x, y, "ground", sprite, mode);
 };
 
@@ -136,6 +139,11 @@ window.spawnWater = function (x, y, mode) {
     if (mode == undefined || mode < 0 || mode > 1) {
         mode = 0;
     }
-    var sprite = { name : "tiles", pos : [TILE_SIZE * (mode + 4), 0], frames: 1 + mode, speed: mode};
+    var sprite;
+    if (mode == 0) {
+        sprite = { name : "tiles", pos : [TILE_SIZE * 4, 0], frames: [[0]], speed: 0};
+    } else {
+        sprite = { name : "tiles", pos : [TILE_SIZE * 5, 0], frames: [[0,1]], speed: 1};
+    }
     return new Block(x, y, "water", sprite, mode);
 };
