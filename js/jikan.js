@@ -4,6 +4,14 @@ var objects = [];
 var context;
 
 var player;
+var season;
+
+window.SEASON = {
+    SPRING : 'Spring',
+    SUMMER : 'Summer',
+    AUTUMN : 'Autumn',
+    WINTER : 'Winter'
+};
 
 function init() {
     context = document.getElementById('canvas').getContext('2d');
@@ -20,34 +28,35 @@ function startLevel() {
 function initMap() {
     objects = [];
     player = spawnPlayer(50, 50);
+    season = SEASON.SUMMER;
     objects.push(player);
-    putTile(0,3, "ground", 1);
-    putTile(1,3, "ground", 0);
-    putTile(2,3, "ground", 2);
-    putTile(0,4, "ground", 3);
-    putTile(1,4, "ground", 3);
-    putTile(2,4, "ground", 3);
-    putTile(0,5, "ground", 3);
-    putTile(1,5, "ground", 3);
-    putTile(2,5, "ground", 3);
-    putTile(3,4, "water", 1);
-    putTile(4,4, "water", 1);
-    putTile(5,4, "water", 1);
-    putTile(3,5, "water", 0);
-    putTile(4,5, "water", 0);
-    putTile(5,5, "water", 0);
-    putTile(6,3, "ground", 1);
-    putTile(7,3, "ground", 0);
-    putTile(8,3, "ground", 0);
-    putTile(9,3, "ground", 0);
-    putTile(6,4, "ground", 3);
-    putTile(7,4, "ground", 3);
-    putTile(8,4, "ground", 3);
-    putTile(9,4, "ground", 3);
-    putTile(6,5, "ground", 3);
-    putTile(7,5, "ground", 3);
-    putTile(8,5, "ground", 3);
-    putTile(9,5, "ground", 3);
+    putTile(0,5, "ground", 1);
+    putTile(1,5, "ground", 0);
+    putTile(2,5, "ground", 2);
+    putTile(0,6, "ground", 3);
+    putTile(1,6, "ground", 3);
+    putTile(2,6, "ground", 3);
+    putTile(0,7, "ground", 3);
+    putTile(1,7, "ground", 3);
+    putTile(2,7, "ground", 3);
+    putTile(3,6, "water", 1);
+    putTile(4,6, "water", 1);
+    putTile(5,6, "water", 1);
+    putTile(3,7, "water", 0);
+    putTile(4,7, "water", 0);
+    putTile(5,7, "water", 0);
+    putTile(6,5, "ground", 1);
+    putTile(7,5, "ground", 0);
+    putTile(8,5, "ground", 0);
+    putTile(9,5, "ground", 0);
+    putTile(6,6, "ground", 3);
+    putTile(7,6, "ground", 3);
+    putTile(8,6, "ground", 3);
+    putTile(9,6, "ground", 3);
+    putTile(6,7, "ground", 3);
+    putTile(7,7, "ground", 3);
+    putTile(8,7, "ground", 3);
+    putTile(9,7, "ground", 3);
 
 }
 
@@ -70,6 +79,7 @@ function tick() {
 }
 
 function processInput() {
+    //movement
     if (input.isPressed(input.keys.RIGHT.key)) {
         player.moveRight();
     } else if (input.isPressed(input.keys.LEFT.key)) {
@@ -78,9 +88,26 @@ function processInput() {
     if (input.isPressed(input.keys.UP.key) || input.isPressed(input.keys.SPACE.key)) {
         if (grounded(player)) player.jump();
     }
+    //seasons
+    if (input.isPressed(input.keys['1'].key)) {
+        changeSeason(SEASON.SPRING);
+    } else if (input.isPressed(input.keys['2'].key)) {
+        changeSeason(SEASON.SUMMER);
+    } else if (input.isPressed(input.keys['3'].key)) {
+        changeSeason(SEASON.AUTUMN);
+    } else if (input.isPressed(input.keys['4'].key)) {
+        changeSeason(SEASON.WINTER);
+    }
+    //special
     if (input.isPressed(input.keys.R.key)) {
         startLevel();
     }
+}
+
+function changeSeason(newSeason) {
+    if (newSeason == season) return;
+
+    season = newSeason;
 }
 
 function update() {
@@ -176,7 +203,10 @@ function render() {
 }
 
 function renderBackground() {
-    context.fillRect(0, 0, WIDTH, HEIGHT);
+    context.drawImage(res.get('background'), 0, 0);
+    context.fillStyle = '#fff';
+    context.font = '17px Aoyagi bold';
+    context.fillText(season, WIDTH / 10 * 9, HEIGHT / 20);
 }
 
 }());

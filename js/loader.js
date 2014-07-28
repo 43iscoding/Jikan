@@ -3,7 +3,7 @@
     function loadGame() {
         initScreen();
         res.onReady(loaded);
-        res.load(["player", "tiles"]);
+        res.load(['player', 'tiles', 'background']);
     }
 
     function initScreen() {
