@@ -15,7 +15,8 @@ window.STATE = {
     DEAD : 'DEAD',
     IDLE_RIGHT : 'IDLE_RIGHT',
     IDLE_LEFT : 'IDLE_LEFT',
-    FROZEN : 'FROZEN'
+    FROZEN : 'FROZEN',
+    WITHERED : 'WITHERED'
 };
 
 
@@ -30,11 +31,15 @@ function Entity(x, y, width, height, type, sprite, args) {
     this.height = height;
     this._type = type;
     this.dead = false;
-    this.sprite = new Sprite(res.get(sprite['name']), sprite['pos'], [width, height],
-            //frames is array of image per state
-            sprite['frames'] == undefined ? [] : sprite['frames'],
-            sprite['speed'] == undefined ? 0 : sprite['speed'],
-            sprite['once'] == undefined ? false : sprite['once']);
+    if (sprite != null && sprite != undefined) {
+        this.sprite = new Sprite(res.get(sprite['name']), sprite['pos'], [width, height],
+        //frames is array of image per state
+        sprite['frames'] == undefined ? [] : sprite['frames'],
+        sprite['speed'] == undefined ? 0 : sprite['speed'],
+        sprite['once'] == undefined ? false : sprite['once']);
+    } else if (type != 'dummy') {
+        console.log('Warning - no sprite info for ' + type);
+    }
     //physics
     this.static = args == undefined ? false : (args['static'] == undefined ? false : args['static']);
     this.xSpeed = args == undefined ? 0 : (args['xSpeed'] == undefined ? 0 : args['xSpeed']);
@@ -54,6 +59,9 @@ Entity.prototype = {
     },
     die : function() {
         this.dead = true;
+    },
+    isPlatform : function() {
+        return false;
     },
     getState : function() {
         if (this.dead) return STATE.DEAD;
@@ -121,6 +129,11 @@ Entity.prototype = {
     processWinter: function () { return true; }
 };
 
+/****************************************************
+                    Dummy cell object.
+ ****************************************************/
+
+window.DUMMY_CELL = new Entity(0,0,0,0,'dummy');
 
 /****************************************************
                     Player object.
@@ -151,7 +164,9 @@ function Block(x, y, type, sprite) {
     Entity.call(this, x, y, TILE_SIZE, TILE_SIZE, type, sprite, args);
 }
 Block.prototype = Object.create(Entity.prototype);
-
+Block.prototype.isPlatform = function() {
+    return true;
+};
 
 /****************************************************
                     Ground object.
@@ -186,9 +201,7 @@ function Water(x, y, style) {
 }
 Water.prototype = Object.create(Block.prototype);
 Water.prototype.getState = function() {
-    if (this.frozen) {
-        return STATE.FROZEN;
-    } else return STATE.IDLE;
+    return this.frozen ? STATE.FROZEN : STATE.IDLE;
 };
 Water.prototype.__defineGetter__('type', function() {
     return this.frozen ? 'ice' : 'water';
@@ -204,6 +217,33 @@ Water.prototype.processWinter = function() {
 };
 
 /****************************************************
+                    Sunflower object.
+ ****************************************************/
+
+function Sunflower(x,y) {
+    var frames = [];
+    frames[STATE.IDLE] = [0];
+    frames[STATE.WITHERED] = [1];
+    Block.call(this, x, y, 'sunflower', {name : 'tiles', pos: [0, TILE_SIZE * 2], frames: frames, speed : 2});
+}
+Sunflower.prototype = Object.create(Block.prototype);
+Sunflower.prototype.isPlatform = function() {
+    return !this.wither;
+};
+Sunflower.prototype.getState = function() {
+    return this.wither ? STATE.WITHERED : STATE.IDLE;
+};
+Sunflower.prototype.processSpring = function() {
+    this.wither = false; return true;
+};
+Sunflower.prototype.processSummer = function() {
+    this.wither = false; return true;
+};
+Sunflower.prototype.processWinter = function() {
+    this.wither = true; return true;
+};
+
+/****************************************************
                 Spawn interface function
  ****************************************************/
 
@@ -212,6 +252,7 @@ window.spawn = function(type, x, y, style) {
         case 'player' : return new Player(x, y);
         case 'ground' : return new Ground(x, y, style);
         case 'water' : return new Water(x, y, style);
+        case 'sunflower' : return new Sunflower(x, y);
         default: {
             console.log("Cannot spawn: unknown type - " + type);
         }

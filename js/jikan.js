@@ -10,20 +10,11 @@ var TEST_MAP = "10W8H" +
     ".........." +
     ".........." +
     ".P........" +
-    ".........." +
+    "........T." +
     "<->....<->" +
     "|||^^^^|||" +
     "|||####|||" +
     "|||####|||";
-
-window.SEASON = {
-    SPRING : 'Spring',
-    SUMMER : 'Summer',
-    AUTUMN : 'Autumn',
-    WINTER : 'Winter'
-};
-
-window.DEFAULT_SEASON = SEASON.SUMMER;
 
 function init() {
     context = document.getElementById('canvas').getContext('2d');
@@ -63,6 +54,7 @@ function parseTile(map, x, y, tile) {
         case '|': type = 'ground'; mode = 3; break;
         case '#': type = 'water'; mode = 0; break;
         case '^': type = 'water'; mode = 1; break;
+        case 'T': type = 'sunflower'; break;
         default : console.log('Unknown tile: ' + tile);
     }
     putTile(map, x, y, type, mode);
@@ -127,20 +119,21 @@ function updateEntity(entity) {
         return;
     }
     //process physics
-    entity.x = Math.round(entity.x + entity.xSpeed);
-    processWallCollision(entity);
 
     entity.y = Math.round(entity.y + entity.ySpeed);
     processGroundCollision(entity);
 
+    entity.x = Math.round(entity.x + entity.xSpeed);
+    processWallCollision(entity);
+
     var under = tileUnder(entity);
 
-    if (under == 'water') {
+    if (under.type == 'water') {
         entity.die();
         entity.static = true;
     }
 
-    if (under != 'ice') {
+    if (under.type != 'ice') {
         entity.applyFriction(FRICTION);
     }
 
@@ -152,8 +145,7 @@ function updateEntity(entity) {
 }
 
 function grounded(entity) {
-    var under = tileUnder(entity);
-    return under == 'ground' || under == 'ice';
+    return tileUnder(entity).isPlatform();
 }
 
 function tileUnder(entity) {
@@ -162,14 +154,14 @@ function tileUnder(entity) {
         var tile = objects[i];
         if ((entity.y + entity.height + 1 == tile.y) &&
             (entity.x < tile.x + tile.width) &&
-            (entity.x + entity.width > tile.x)) return tile.type;
+            (entity.x + entity.width > tile.x)) return tile;
     }
-    return 'none';
+    return DUMMY_CELL;
 }
 
 function processWallCollision(entity) {
     for (var i = 0; i < objects.length; i++) {
-        if (objects[i].type != 'ground' && objects[i].type != 'ice') continue;
+        if (!objects[i].isPlatform()) continue;
 
         while (collision(entity, objects[i])) {
             if (entity.x < objects[i].x) {
@@ -185,7 +177,7 @@ function processWallCollision(entity) {
 
 function processGroundCollision(entity) {
     for (var i = 0; i < objects.length; i++) {
-        if (objects[i].type == 'ground' || objects[i].type == 'water' || objects[i].type == 'ice') {
+        if (objects[i].isPlatform()) {
             while (collision(entity, objects[i])) {
                 entity.y--;
             }

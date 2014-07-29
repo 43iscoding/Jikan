@@ -15,6 +15,15 @@
     window.GRAVITY = 0.12;
     window.FREE_FALL = 5;
 
+    window.SEASON = {
+        SPRING : 'Spring',
+        SUMMER : 'Summer',
+        AUTUMN : 'Autumn',
+        WINTER : 'Winter'
+    };
+
+    window.DEFAULT_SEASON = SEASON.SUMMER;
+
     window.PIXEL_RATIO = function () {
         var ctx = document.getElementById("canvas").getContext("2d"),
             dpr = window.devicePixelRatio || 1,

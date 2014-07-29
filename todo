@@ -5,9 +5,10 @@ Engine:
 .Parallax background
 
 Content:
-.Sunflower
-.Seasons
-.Water freezing
+.Bears
+.Carnivorous plants
+.Rooting liana
+.Season change ticks
 
 Art:
 .Player
@@ -21,3 +22,4 @@ Refactor:
 
 Misc:
 .Full screen
+.Transparent sprites
