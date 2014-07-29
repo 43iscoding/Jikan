@@ -35,12 +35,14 @@ function Entity(x, y, width, height, type, sprite, args) {
             sprite['frames'] == undefined ? [] : sprite['frames'],
             sprite['speed'] == undefined ? 0 : sprite['speed'],
             sprite['once'] == undefined ? false : sprite['once']);
-
+    //physics
     this.static = args == undefined ? false : (args['static'] == undefined ? false : args['static']);
     this.xSpeed = args == undefined ? 0 : (args['xSpeed'] == undefined ? 0 : args['xSpeed']);
     this.ySpeed = args == undefined ? 0 : (args['ySpeed'] == undefined ? 0 : args['ySpeed']);
     this.velocity = args == undefined ? 0 : (args['velocity'] == undefined ? 0 : args['velocity']);
     this.jumpSpeed = args == undefined ? 0 : (args['jump'] == undefined ? 0 : args['jump']);
+    //season interaction
+    this.processedSeason = DEFAULT_SEASON;
 }
 
 Entity.prototype = {
@@ -97,7 +99,23 @@ Entity.prototype = {
     },
     applyGravity : function(gravity) {
         this.ySpeed = Math.min(this.ySpeed + gravity, FREE_FALL);
-    }
+    },
+    processSeason : function(season) {
+        if (this.processedSeason == season) return;
+        var result = false;
+        switch (season) {
+            case SEASON.SPRING: result = this.processSpring(); break;
+            case SEASON.SUMMER: result = this.processSummer(); break;
+            case SEASON.AUTUMN: result = this.processAutumn(); break;
+            case SEASON.WINTER: result = this.processWinter(); break;
+            default : console.log("Unknown season: " + season);
+        }
+        if (result) this.processedSeason = season;
+    },
+    processSpring: function () { return true; },
+    processSummer: function () { return true; },
+    processAutumn: function () { return true; },
+    processWinter: function () { return true; }
 };
 
 
@@ -164,6 +182,20 @@ function Water(x, y, style) {
     Block.call(this, x, y, "water", { name : "tiles", pos : [0, TILE_SIZE], frames: frames, speed: 2});
 }
 Water.prototype = Object.create(Block.prototype);
+Water.prototype.getState = function() {
+    if (this.frozen) {
+        return STATE.FROZEN;
+    } else return STATE.IDLE;
+};
+Water.prototype.processSpring = function() {
+    this.frozen = false; return true;
+};
+Water.prototype.processSummer = function() {
+    this.frozen = false; return true;
+};
+Water.prototype.processWinter = function() {
+    this.frozen = true; return true;
+};
 
 /****************************************************
                 Spawn interface function

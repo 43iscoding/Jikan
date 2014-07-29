@@ -23,6 +23,8 @@ window.SEASON = {
     WINTER : 'Winter'
 };
 
+window.DEFAULT_SEASON = SEASON.SUMMER;
+
 function init() {
     context = document.getElementById('canvas').getContext('2d');
     startLevel();
@@ -32,7 +34,7 @@ function init() {
 window.init = init;
 
 function startLevel() {
-    season = SEASON.SUMMER;
+    season = DEFAULT_SEASON;
     objects = parseMap(TEST_MAP);
 }
 
@@ -120,10 +122,11 @@ function update() {
 
 function updateEntity(entity) {
     entity.updateSprite();
+    entity.processSeason(season);
     if (entity.static) {
         return;
     }
-
+    //process physics
     entity.x = Math.round(entity.x + entity.xSpeed);
     processWallCollision(entity);
 
@@ -141,10 +144,6 @@ function updateEntity(entity) {
     } else {
         entity.applyGravity(GRAVITY);
     }
-}
-
-function processSeason(entity) {
-
 }
 
 function grounded(entity) {
