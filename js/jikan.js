@@ -6,6 +6,16 @@ var context;
 var player;
 var season;
 
+var TEST_MAP = "10W8H" +
+    ".........." +
+    ".........." +
+    ".P........" +
+    ".........." +
+    "<-->..<-->" +
+    "||||^^||||" +
+    "||||##||||" +
+    "||||##||||";
+
 window.SEASON = {
     SPRING : 'Spring',
     SUMMER : 'Summer',
@@ -22,46 +32,80 @@ function init() {
 window.init = init;
 
 function startLevel() {
-    initMap();
+    season = SEASON.SUMMER;
+    objects = [];
+    objects = parseMap(TEST_MAP);
+    //initMap();
 }
 
 function initMap() {
-    objects = [];
-    player = spawnPlayer(50, 50);
-    season = SEASON.SUMMER;
-    objects.push(player);
-    putTile(0,5, "ground", 1);
-    putTile(1,5, "ground", 0);
-    putTile(2,5, "ground", 2);
-    putTile(0,6, "ground", 3);
-    putTile(1,6, "ground", 3);
-    putTile(2,6, "ground", 3);
-    putTile(0,7, "ground", 3);
-    putTile(1,7, "ground", 3);
-    putTile(2,7, "ground", 3);
-    putTile(3,6, "water", 1);
-    putTile(4,6, "water", 1);
-    putTile(5,6, "water", 1);
-    putTile(3,7, "water", 0);
-    putTile(4,7, "water", 0);
-    putTile(5,7, "water", 0);
-    putTile(6,5, "ground", 1);
-    putTile(7,5, "ground", 0);
-    putTile(8,5, "ground", 0);
-    putTile(9,5, "ground", 0);
-    putTile(6,6, "ground", 3);
-    putTile(7,6, "ground", 3);
-    putTile(8,6, "ground", 3);
-    putTile(9,6, "ground", 3);
-    putTile(6,7, "ground", 3);
-    putTile(7,7, "ground", 3);
-    putTile(8,7, "ground", 3);
-    putTile(9,7, "ground", 3);
-
+    putTile(objects,2,2, "player");
+    putTile(objects,0,5, "ground", 1);
+    putTile(objects,1,5, "ground", 0);
+    putTile(objects,2,5, "ground", 2);
+    putTile(objects,0,6, "ground", 3);
+    putTile(objects,1,6, "ground", 3);
+    putTile(objects,2,6, "ground", 3);
+    putTile(objects,0,7, "ground", 3);
+    putTile(objects,1,7, "ground", 3);
+    putTile(objects,2,7, "ground", 3);
+    putTile(objects,3,6, "water", 1);
+    putTile(objects,4,6, "water", 1);
+    putTile(objects,5,6, "water", 1);
+    putTile(objects,3,7, "water", 0);
+    putTile(objects,4,7, "water", 0);
+    putTile(objects,5,7, "water", 0);
+    putTile(objects,6,5, "ground", 1);
+    putTile(objects,7,5, "ground", 0);
+    putTile(objects,8,5, "ground", 0);
+    putTile(objects,9,5, "ground", 0);
+    putTile(objects,6,6, "ground", 3);
+    putTile(objects,7,6, "ground", 3);
+    putTile(objects,8,6, "ground", 3);
+    putTile(objects,9,6, "ground", 3);
+    putTile(objects,6,7, "ground", 3);
+    putTile(objects,7,7, "ground", 3);
+    putTile(objects,8,7, "ground", 3);
+    putTile(objects,9,7, "ground", 3);
 }
 
-function putTile(x, y, type, mode) {
+function parseMap(mapInfo) {
+    var width = mapInfo.substring(0,mapInfo.indexOf('W'));
+    var height = mapInfo.substring(mapInfo.indexOf('W') + 1, mapInfo.indexOf('H'));
+    var offset = mapInfo.indexOf('H') + 1;
+    var map = [];
+    for (var y = 0; y < height; y++) {
+        for (var x = 0; x < width; x++) {
+            parseTile(map, x, y, mapInfo[y * width + x % width + offset]);
+        }
+    }
+    return map;
+}
+
+function parseTile(map, x, y, tile) {
+    var type = null;
+    var mode = null;
+    switch (tile) {
+        case '.': return; //empty tile
+        case 'P': type = 'player'; break;
+        case '-': type = 'ground'; mode = 0; break;
+        case '<': type = 'ground'; mode = 1; break;
+        case '>': type = 'ground'; mode = 2; break;
+        case '|': type = 'ground'; mode = 3; break;
+        case '#': type = 'water'; mode = 0; break;
+        case '^': type = 'water'; mode = 1; break;
+        default : console.log('Unknown tile: ' + tile);
+    }
+    putTile(map, x, y, type, mode);
+}
+
+function putTile(objects, x, y, type, mode) {
     switch (type) {
+        case 'player' : {
+            player = spawnPlayer(x * TILE_SIZE, y * TILE_SIZE);
+            objects.push(player);
+            return;
+        }
         case 'ground' : objects.push(spawnGround(x * TILE_SIZE, y * TILE_SIZE, mode)); return;
         case 'water' : objects.push(spawnWater(x * TILE_SIZE, y * TILE_SIZE, mode)); return;
         default : {
