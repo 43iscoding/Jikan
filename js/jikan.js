@@ -67,18 +67,10 @@ function parseTile(map, x, y, tile) {
 }
 
 function putTile(objects, x, y, type, mode) {
-    switch (type) {
-        case 'player' : {
-            player = spawnPlayer(x * TILE_SIZE, y * TILE_SIZE);
-            objects.push(player);
-            return;
-        }
-        case 'ground' : objects.push(spawnGround(x * TILE_SIZE, y * TILE_SIZE, mode)); return;
-        case 'water' : objects.push(spawnWater(x * TILE_SIZE, y * TILE_SIZE, mode)); return;
-        default : {
-            console.log("Unknown tile type - " + type);
-            return;
-        }
+    var object = spawn(type, x * TILE_SIZE, y * TILE_SIZE, mode);
+    objects.push(object);
+    if (type == 'player') {
+        player = object;
     }
 }
 
@@ -117,7 +109,6 @@ function processInput() {
 
 function changeSeason(newSeason) {
     if (newSeason == season) return;
-
     season = newSeason;
 }
 
@@ -150,6 +141,10 @@ function updateEntity(entity) {
     } else {
         entity.applyGravity(GRAVITY);
     }
+}
+
+function processSeason(entity) {
+
 }
 
 function grounded(entity) {

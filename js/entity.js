@@ -1,3 +1,28 @@
+/****************************************************************************
+    Every possible state of entities, which defines behaviour and sprite.
+ ***************************************************************************/
+
+window.STATE = {
+    IDLE : 'IDLE',
+    WALK_RIGHT : 'WALK_RIGHT',
+    WALK_LEFT : 'WALK_LEFT',
+    FALL : 'FALL',
+    JUMP : 'JUMP',
+    JUMP_RIGHT : 'JUMP_RIGHT',
+    JUMP_LEFT : 'JUMP_LEFT',
+    FALL_RIGHT : 'FALL_RIGHT',
+    FALL_LEFT : 'FALL_LEFT',
+    DEAD : 'DEAD',
+    IDLE_RIGHT : 'IDLE_RIGHT',
+    IDLE_LEFT : 'IDLE_LEFT',
+    FROZEN : 'FROZEN'
+};
+
+
+/*****************************************
+    Entity class. Every object in game.
+ ****************************************/
+
 function Entity(x, y, width, height, type, sprite, args) {
     this.x = x;
     this.y = y;
@@ -75,41 +100,10 @@ Entity.prototype = {
     }
 };
 
-window.STATE = {
-        IDLE : 0,
-        WALK_RIGHT : 1,
-        WALK_LEFT : 2,
-        FALL : 3,
-        JUMP : 4,
-        JUMP_RIGHT : 5,
-        JUMP_LEFT : 6,
-        FALL_RIGHT : 7,
-        FALL_LEFT : 8,
-        DEAD : 9,
-        IDLE_RIGHT : 10,
-        IDLE_LEFT : 11,
-        FROZEN : 12,
-        getName : function(index) {
-            switch (index) {
-                case this.IDLE : return 'IDLE';
-                case this.IDLE_RIGHT : return 'IDLE_RIGHT';
-                case this.IDLE_LEFT : return 'IDLE_LEFT';
-                case this.WALK_RIGHT : return 'WALK_RIGHT';
-                case this.WALK_LEFT : return 'WALK_LEFT';
-                case this.JUMP : return 'JUMP';
-                case this.JUMP_RIGHT : return 'JUMP_RIGHT';
-                case this.JUMP_LEFT : return 'JUMP_LEFT';
-                case this.FALL : return 'FALL';
-                case this.FALL_RIGHT : return 'FALL_RIGHT';
-                case this.FALL_LEFT : return 'FALL_LEFT';
-                case this.DEAD : return 'DEAD';
-                default : {
-                    console.log("Unknown entity state: " + index);
-                }
-            }
-        }
-};
 
+/****************************************************
+                    Player object.
+ ****************************************************/
 function Player(x, y) {
     var args = { velocity : 2, jump : 3.5 };
     var frames = [];
@@ -127,36 +121,61 @@ function Player(x, y) {
 }
 Player.prototype = Object.create(Entity.prototype);
 
-function Block(x, y, type, sprite, mode) {
-    var args = { static : true, mode : mode };
+/***************************************************
+    Generic block object. Not affected by physics.
+ ***************************************************/
+
+function Block(x, y, type, sprite) {
+    var args = { static : true };
     Entity.call(this, x, y, TILE_SIZE, TILE_SIZE, type, sprite, args);
 }
 Block.prototype = Object.create(Entity.prototype);
 
-window.spawnPlayer = function (x,y) {
-    return new Player(x, y);
-};
 
-window.spawnGround = function (x, y, mode) {
-    if (mode == undefined || mode < 0 || mode > 3) {
-        mode = 0;
+/****************************************************
+                    Ground object.
+ ****************************************************/
+function Ground(x, y, style) {
+    if (style == undefined || style < 0 || style > 3) {
+        style = 0;
     }
     var frames = [];
     frames[STATE.IDLE] = 0;
-    return new Block(x, y, "ground", { name : "tiles", pos : [TILE_SIZE * mode, 0], frames: frames, speed: 0}, mode);
-};
+    Block.call(this, x, y, "ground", { name : "tiles", pos : [TILE_SIZE * style, 0], frames: frames, speed: 0});
+}
+Ground.prototype = Object.create(Block.prototype);
 
-window.spawnWater = function (x, y, mode) {
-    if (mode == undefined || mode < 0 || mode > 1) {
-        mode = 0;
+/****************************************************
+                    Water/Ice object.
+ ****************************************************/
+
+function Water(x, y, style) {
+    if (style == undefined || style < 0 || style > 1) {
+        style = 0;
     }
     var frames = [];
     frames[STATE.FROZEN] = [5];
 
-    if (mode == 0) {
+    if (style == 0) {
         frames[STATE.IDLE] = [0];
     } else {
         frames[STATE.IDLE] = [1,2,3,4];
     }
-    return new Block(x, y, "water", { name : "tiles", pos : [0, TILE_SIZE], frames: frames, speed: 2}, mode);
+    Block.call(this, x, y, "water", { name : "tiles", pos : [0, TILE_SIZE], frames: frames, speed: 2});
+}
+Water.prototype = Object.create(Block.prototype);
+
+/****************************************************
+                Spawn interface function
+ ****************************************************/
+
+window.spawn = function(type, x, y, style) {
+    switch (type) {
+        case 'player' : return new Player(x, y);
+        case 'ground' : return new Ground(x, y, style);
+        case 'water' : return new Water(x, y, style);
+        default: {
+            console.log("Cannot spawn: unknown type - " + type);
+        }
+    }
 };
