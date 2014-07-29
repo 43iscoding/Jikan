@@ -33,40 +33,7 @@ window.init = init;
 
 function startLevel() {
     season = SEASON.SUMMER;
-    objects = [];
     objects = parseMap(TEST_MAP);
-    //initMap();
-}
-
-function initMap() {
-    putTile(objects,2,2, "player");
-    putTile(objects,0,5, "ground", 1);
-    putTile(objects,1,5, "ground", 0);
-    putTile(objects,2,5, "ground", 2);
-    putTile(objects,0,6, "ground", 3);
-    putTile(objects,1,6, "ground", 3);
-    putTile(objects,2,6, "ground", 3);
-    putTile(objects,0,7, "ground", 3);
-    putTile(objects,1,7, "ground", 3);
-    putTile(objects,2,7, "ground", 3);
-    putTile(objects,3,6, "water", 1);
-    putTile(objects,4,6, "water", 1);
-    putTile(objects,5,6, "water", 1);
-    putTile(objects,3,7, "water", 0);
-    putTile(objects,4,7, "water", 0);
-    putTile(objects,5,7, "water", 0);
-    putTile(objects,6,5, "ground", 1);
-    putTile(objects,7,5, "ground", 0);
-    putTile(objects,8,5, "ground", 0);
-    putTile(objects,9,5, "ground", 0);
-    putTile(objects,6,6, "ground", 3);
-    putTile(objects,7,6, "ground", 3);
-    putTile(objects,8,6, "ground", 3);
-    putTile(objects,9,6, "ground", 3);
-    putTile(objects,6,7, "ground", 3);
-    putTile(objects,7,7, "ground", 3);
-    putTile(objects,8,7, "ground", 3);
-    putTile(objects,9,7, "ground", 3);
 }
 
 function parseMap(mapInfo) {

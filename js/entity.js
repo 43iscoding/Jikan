@@ -88,6 +88,7 @@ window.STATE = {
         DEAD : 9,
         IDLE_RIGHT : 10,
         IDLE_LEFT : 11,
+        FROZEN : 12,
         getName : function(index) {
             switch (index) {
                 case this.IDLE : return 'IDLE';
@@ -111,9 +112,18 @@ window.STATE = {
 
 function Player(x, y) {
     var args = { velocity : 2, jump : 3.5 };
-    Entity.call(this, x, y, 22, 22, "player", {name : "player", pos : [0,0],
-        frames: [[0], [1], [2], [3], [4], [5], [6], [7], [8], [9]],
-        speed: 2}, args);
+    var frames = [];
+    frames[STATE.IDLE] = [0];
+    frames[STATE.WALK_RIGHT] = [1];
+    frames[STATE.WALK_LEFT] = [2];
+    frames[STATE.FALL] = [3];
+    frames[STATE.JUMP] = [4];
+    frames[STATE.JUMP_RIGHT] = [5];
+    frames[STATE.JUMP_LEFT] = [6];
+    frames[STATE.FALL_RIGHT] = [7];
+    frames[STATE.FALL_LEFT] = [8];
+    frames[STATE.DEAD] = [9];
+    Entity.call(this, x, y, 22, 22, "player", {name : "player", pos : [0,0], frames: frames, speed: 2}, args);
 }
 Player.prototype = Object.create(Entity.prototype);
 
@@ -131,19 +141,22 @@ window.spawnGround = function (x, y, mode) {
     if (mode == undefined || mode < 0 || mode > 3) {
         mode = 0;
     }
-    var sprite = { name : "tiles", pos : [TILE_SIZE * mode, 0], frames: [[0]], speed: 0};
-    return new Block(x, y, "ground", sprite, mode);
+    var frames = [];
+    frames[STATE.IDLE] = 0;
+    return new Block(x, y, "ground", { name : "tiles", pos : [TILE_SIZE * mode, 0], frames: frames, speed: 0}, mode);
 };
 
 window.spawnWater = function (x, y, mode) {
     if (mode == undefined || mode < 0 || mode > 1) {
         mode = 0;
     }
-    var sprite;
+    var frames = [];
+    frames[STATE.FROZEN] = [5];
+
     if (mode == 0) {
-        sprite = { name : "tiles", pos : [TILE_SIZE * 4, 0], frames: [[0]], speed: 0};
+        frames[STATE.IDLE] = [0];
     } else {
-        sprite = { name : "tiles", pos : [TILE_SIZE * 5, 0], frames: [[0,1]], speed: 1};
+        frames[STATE.IDLE] = [1,2,3,4];
     }
-    return new Block(x, y, "water", sprite, mode);
+    return new Block(x, y, "water", { name : "tiles", pos : [0, TILE_SIZE], frames: frames, speed: 2}, mode);
 };
