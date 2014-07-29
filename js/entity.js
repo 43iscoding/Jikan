@@ -28,7 +28,7 @@ function Entity(x, y, width, height, type, sprite, args) {
     this.y = y;
     this.width = width;
     this.height = height;
-    this.type = type;
+    this._type = type;
     this.dead = false;
     this.sprite = new Sprite(res.get(sprite['name']), sprite['pos'], [width, height],
             //frames is array of image per state
@@ -46,6 +46,9 @@ function Entity(x, y, width, height, type, sprite, args) {
 }
 
 Entity.prototype = {
+    get type() {
+        return this._type;
+    },
     updateSprite : function() {
         this.sprite.update(this.getState());
     },
@@ -187,6 +190,9 @@ Water.prototype.getState = function() {
         return STATE.FROZEN;
     } else return STATE.IDLE;
 };
+Water.prototype.__defineGetter__('type', function() {
+    return this.frozen ? 'ice' : 'water';
+});
 Water.prototype.processSpring = function() {
     this.frozen = false; return true;
 };

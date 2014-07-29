@@ -11,10 +11,10 @@ var TEST_MAP = "10W8H" +
     ".........." +
     ".P........" +
     ".........." +
-    "<-->..<-->" +
-    "||||^^||||" +
-    "||||##||||" +
-    "||||##||||";
+    "<->....<->" +
+    "|||^^^^|||" +
+    "|||####|||" +
+    "|||####|||";
 
 window.SEASON = {
     SPRING : 'Spring',
@@ -133,12 +133,17 @@ function updateEntity(entity) {
     entity.y = Math.round(entity.y + entity.ySpeed);
     processGroundCollision(entity);
 
-    if (tileUnder(entity) == 'water') {
+    var under = tileUnder(entity);
+
+    if (under == 'water') {
         entity.die();
         entity.static = true;
     }
 
-    entity.applyFriction(FRICTION);
+    if (under != 'ice') {
+        entity.applyFriction(FRICTION);
+    }
+
     if (grounded(entity)) {
         entity.ySpeed = 0;
     } else {
@@ -147,12 +152,13 @@ function updateEntity(entity) {
 }
 
 function grounded(entity) {
-    return tileUnder(entity) == 'ground';
+    var under = tileUnder(entity);
+    return under == 'ground' || under == 'ice';
 }
 
 function tileUnder(entity) {
     for (var i = 0; i < objects.length; i++) {
-        if (objects[i].type == entity) continue;
+        if (objects[i] == entity) continue;
         var tile = objects[i];
         if ((entity.y + entity.height + 1 == tile.y) &&
             (entity.x < tile.x + tile.width) &&
@@ -163,7 +169,7 @@ function tileUnder(entity) {
 
 function processWallCollision(entity) {
     for (var i = 0; i < objects.length; i++) {
-        if (objects[i].type != 'ground') continue;
+        if (objects[i].type != 'ground' && objects[i].type != 'ice') continue;
 
         while (collision(entity, objects[i])) {
             if (entity.x < objects[i].x) {
@@ -179,7 +185,7 @@ function processWallCollision(entity) {
 
 function processGroundCollision(entity) {
     for (var i = 0; i < objects.length; i++) {
-        if (objects[i].type == 'ground' || objects[i].type == 'water') {
+        if (objects[i].type == 'ground' || objects[i].type == 'water' || objects[i].type == 'ice') {
             while (collision(entity, objects[i])) {
                 entity.y--;
             }
