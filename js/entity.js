@@ -74,6 +74,9 @@ Entity.prototype = {
     isPlatform : function() {
         return false;
     },
+    isBouncy : function() {
+        return false;
+    },
     getState : function() {
         if (this.dead) return STATE.DEAD;
 
@@ -296,6 +299,12 @@ Bear.prototype.getState = function() {
             return STATE.FALL;
         } else return STATE.IDLE;
     }
+};
+Bear.prototype.isPlatform = function() {
+    return this.sleeping;
+};
+Bear.prototype.isBouncy = function() {
+    return this.sleeping;
 };
 Bear.prototype.processSpring = function() {
     this.sleeping = false; return true;

@@ -138,7 +138,9 @@ function updateEntity(entity) {
         entity.applyFriction(FRICTION);
     }
 
-    if (grounded(entity)) {
+    if (under.isBouncy()) {
+        entity.ySpeed = -entity.ySpeed;
+    } else if (grounded(entity)) {
         entity.ySpeed = 0;
     } else {
         entity.applyGravity(GRAVITY);
@@ -162,6 +164,7 @@ function tileUnder(entity) {
 
 function processWallCollision(entity) {
     for (var i = 0; i < objects.length; i++) {
+        if (objects[i] == entity) continue;
         if (!objects[i].isPlatform()) continue;
 
         while (collision(entity, objects[i])) {
@@ -172,18 +175,18 @@ function processWallCollision(entity) {
             }
         }
         entity.x = Math.round(entity.x);
-
     }
 }
 
 function processGroundCollision(entity) {
     for (var i = 0; i < objects.length; i++) {
-        if (objects[i].isPlatform()) {
-            while (collision(entity, objects[i])) {
-                entity.y--;
-            }
-            entity.y = Math.round(entity.y);
+        if (objects[i] == entity) continue;
+        if (!objects[i].isPlatform()) continue;
+
+        while (collision(entity, objects[i])) {
+            entity.y--;
         }
+        entity.y = Math.round(entity.y);
     }
 }
 
