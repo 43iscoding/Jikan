@@ -16,9 +16,20 @@ window.STATE = {
     IDLE_RIGHT : 'IDLE_RIGHT',
     IDLE_LEFT : 'IDLE_LEFT',
     FROZEN : 'FROZEN',
-    WITHERED : 'WITHERED'
+    WITHERED : 'WITHERED',
+    SLEEPING : 'SLEEPING'
 };
 
+window.TYPE = {
+    DUMMY : 'DUMMY',
+    PLAYER : 'PLAYER',
+    BLOCK : 'BLOCK',
+    WATER : 'WATER',
+    ICE : 'ICE',
+    GROUND : 'GROUND',
+    SUNFLOWER : 'SUNFLOWER',
+    BEAR : 'BEAR'
+};
 
 /*****************************************
     Entity class. Every object in game.
@@ -37,7 +48,7 @@ function Entity(x, y, width, height, type, sprite, args) {
         sprite['frames'] == undefined ? [] : sprite['frames'],
         sprite['speed'] == undefined ? 0 : sprite['speed'],
         sprite['once'] == undefined ? false : sprite['once']);
-    } else if (type != 'dummy') {
+    } else if (type != TYPE.DUMMY) {
         console.log('Warning - no sprite info for ' + type);
     }
     //physics
@@ -133,7 +144,7 @@ Entity.prototype = {
                     Dummy cell object.
  ****************************************************/
 
-window.DUMMY_CELL = new Entity(0,0,0,0,'dummy');
+window.DUMMY_CELL = new Entity(0,0,0,0, TYPE.DUMMY);
 
 /****************************************************
                     Player object.
@@ -151,7 +162,7 @@ function Player(x, y) {
     frames[STATE.FALL_RIGHT] = [7];
     frames[STATE.FALL_LEFT] = [8];
     frames[STATE.DEAD] = [9];
-    Entity.call(this, x, y, 22, 22, "player", {name : "player", pos : [0,0], frames: frames, speed: 2}, args);
+    Entity.call(this, x, y, 22, 22, TYPE.PLAYER, {name : 'player', pos : [0,0], frames: frames, speed: 2}, args);
 }
 Player.prototype = Object.create(Entity.prototype);
 
@@ -177,7 +188,7 @@ function Ground(x, y, style) {
     }
     var frames = [];
     frames[STATE.IDLE] = 0;
-    Block.call(this, x, y, "ground", { name : "tiles", pos : [TILE_SIZE * style, 0], frames: frames, speed: 0});
+    Block.call(this, x, y, TYPE.GROUND, { name : "tiles", pos : [TILE_SIZE * style, 0], frames: frames, speed: 0});
 }
 Ground.prototype = Object.create(Block.prototype);
 
@@ -197,14 +208,14 @@ function Water(x, y, style) {
     } else {
         frames[STATE.IDLE] = [1,2,3,4];
     }
-    Block.call(this, x, y, "water", { name : "tiles", pos : [0, TILE_SIZE], frames: frames, speed: 2});
+    Block.call(this, x, y, TYPE.WATER, { name : "tiles", pos : [0, TILE_SIZE], frames: frames, speed: 2});
 }
 Water.prototype = Object.create(Block.prototype);
 Water.prototype.getState = function() {
     return this.frozen ? STATE.FROZEN : STATE.IDLE;
 };
 Water.prototype.__defineGetter__('type', function() {
-    return this.frozen ? 'ice' : 'water';
+    return this.frozen ? TYPE.ICE : TYPE.WATER;
 });
 Water.prototype.processSpring = function() {
     this.frozen = false; return true;
@@ -224,7 +235,7 @@ function Sunflower(x,y) {
     var frames = [];
     frames[STATE.IDLE] = [0];
     frames[STATE.WITHERED] = [1];
-    Block.call(this, x, y, 'sunflower', {name : 'tiles', pos: [0, TILE_SIZE * 2], frames: frames, speed : 2});
+    Block.call(this, x, y, TYPE.SUNFLOWER, {name : 'tiles', pos: [0, TILE_SIZE * 2], frames: frames, speed : 2});
 }
 Sunflower.prototype = Object.create(Block.prototype);
 Sunflower.prototype.isPlatform = function() {
@@ -244,15 +255,69 @@ Sunflower.prototype.processWinter = function() {
 };
 
 /****************************************************
+                    Bear object.
+ ****************************************************/
+
+function Bear(x, y) {
+    var args = { velocity : 1};
+    var frames = [];
+    frames[STATE.IDLE] = [0];
+    frames[STATE.WALK_RIGHT] = [1];
+    frames[STATE.WALK_LEFT] = [2];
+    frames[STATE.JUMP] = [4];
+    frames[STATE.JUMP_RIGHT] = [5];
+    frames[STATE.JUMP_LEFT] = [6];
+    frames[STATE.FALL] = [3];
+    frames[STATE.FALL_RIGHT] = [7];
+    frames[STATE.FALL_LEFT] = [8];
+    frames[STATE.SLEEPING] = [9];
+    //TODO: Bear spritesheet
+    Entity.call(this, x, y, 22, 22, TYPE.BEAR, {name : 'player', pos : [0,0], frames: frames, speed: 2}, args);
+}
+Bear.prototype = Object.create(Entity.prototype);
+Bear.prototype.getState = function() {
+    if (this.sleeping) return STATE.SLEEPING;
+    if (this.xSpeed > 0) {
+        if (this.ySpeed < 0) {
+            return STATE.JUMP_RIGHT;
+        } else if (this.ySpeed > 0) {
+            return STATE.FALL_RIGHT;
+        } else return STATE.WALK_RIGHT;
+    } else if (this.xSpeed < 0) {
+        if (this.ySpeed < 0) {
+            return STATE.JUMP_LEFT;
+        } else if (this.ySpeed > 0) {
+            return STATE.FALL_LEFT;
+        } else return STATE.WALK_LEFT;
+    } else {
+        if (this.ySpeed < 0) {
+            return STATE.JUMP;
+        } else if (this.ySpeed > 0) {
+            return STATE.FALL;
+        } else return STATE.IDLE;
+    }
+};
+Bear.prototype.processSpring = function() {
+    this.sleeping = false; return true;
+};
+Bear.prototype.processSummer = function() {
+    this.sleeping = false; return true;
+};
+Bear.prototype.processWinter = function() {
+    this.sleeping = true; return true;
+};
+
+/****************************************************
                 Spawn interface function
  ****************************************************/
 
 window.spawn = function(type, x, y, style) {
     switch (type) {
-        case 'player' : return new Player(x, y);
-        case 'ground' : return new Ground(x, y, style);
-        case 'water' : return new Water(x, y, style);
-        case 'sunflower' : return new Sunflower(x, y);
+        case TYPE.PLAYER : return new Player(x, y);
+        case TYPE.GROUND : return new Ground(x, y, style);
+        case TYPE.WATER : return new Water(x, y, style);
+        case TYPE.SUNFLOWER : return new Sunflower(x, y);
+        case TYPE.BEAR : return new Bear(x, y);
         default: {
             console.log("Cannot spawn: unknown type - " + type);
         }

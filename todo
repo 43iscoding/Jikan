@@ -5,10 +5,14 @@ Engine:
 .Parallax background
 
 Content:
-.Bears
 .Carnivorous plants
 .Rooting liana
 .Season change ticks
+.Fix ice physics when turning around
+.Sunflower should grow non-instantly
+.Bear wandering
+.Bear bouncy bellies when hibernating
+.Bear should enrage when Winter -> Summer
 
 Art:
 .Player

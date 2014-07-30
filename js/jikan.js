@@ -10,7 +10,7 @@ var TEST_MAP = "10W8H" +
     ".........." +
     ".........." +
     ".P........" +
-    "........T." +
+    ".T......B." +
     "<->....<->" +
     "|||^^^^|||" +
     "|||####|||" +
@@ -47,14 +47,15 @@ function parseTile(map, x, y, tile) {
     var mode = null;
     switch (tile) {
         case '.': return; //empty tile
-        case 'P': type = 'player'; break;
-        case '-': type = 'ground'; mode = 0; break;
-        case '<': type = 'ground'; mode = 1; break;
-        case '>': type = 'ground'; mode = 2; break;
-        case '|': type = 'ground'; mode = 3; break;
-        case '#': type = 'water'; mode = 0; break;
-        case '^': type = 'water'; mode = 1; break;
-        case 'T': type = 'sunflower'; break;
+        case 'P': type = TYPE.PLAYER; break;
+        case '-': type = TYPE.GROUND; mode = 0; break;
+        case '<': type = TYPE.GROUND; mode = 1; break;
+        case '>': type = TYPE.GROUND; mode = 2; break;
+        case '|': type = TYPE.GROUND; mode = 3; break;
+        case '#': type = TYPE.WATER; mode = 0; break;
+        case '^': type = TYPE.WATER; mode = 1; break;
+        case 'T': type = TYPE.SUNFLOWER; break;
+        case 'B': type = TYPE.BEAR; break;
         default : console.log('Unknown tile: ' + tile);
     }
     putTile(map, x, y, type, mode);
@@ -63,7 +64,7 @@ function parseTile(map, x, y, tile) {
 function putTile(objects, x, y, type, mode) {
     var object = spawn(type, x * TILE_SIZE, y * TILE_SIZE, mode);
     objects.push(object);
-    if (type == 'player') {
+    if (type == TYPE.PLAYER) {
         player = object;
     }
 }
@@ -128,12 +129,12 @@ function updateEntity(entity) {
 
     var under = tileUnder(entity);
 
-    if (under.type == 'water') {
+    if (under.type == TYPE.WATER) {
         entity.die();
         entity.static = true;
     }
 
-    if (under.type != 'ice') {
+    if (under.type != TYPE.ICE) {
         entity.applyFriction(FRICTION);
     }
 
