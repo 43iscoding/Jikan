@@ -122,23 +122,21 @@ function updateEntity(entity) {
     //process physics
 
     entity.y = Math.round(entity.y + entity.ySpeed);
-    processGroundCollision(entity);
+    var ground = processGroundCollision(entity);
 
     entity.x = Math.round(entity.x + entity.xSpeed);
-    processWallCollision(entity);
+    var wall = processWallCollision(entity);
 
-    var under = tileUnder(entity);
-
-    if (under.type == TYPE.WATER) {
+    if (ground.isFatal() || wall.isFatal()) {
         entity.die();
         entity.static = true;
     }
 
-    if (under.type != TYPE.ICE) {
+    if (ground.type != TYPE.ICE) {
         entity.applyFriction(FRICTION);
     }
 
-    if (under.isBouncy()) {
+    if (ground.isBouncy()) {
         entity.ySpeed = -entity.ySpeed;
     } else if (grounded(entity)) {
         entity.ySpeed = 0;
@@ -166,6 +164,7 @@ function processWallCollision(entity) {
     for (var i = 0; i < objects.length; i++) {
         if (objects[i] == entity) continue;
         if (!objects[i].isPlatform()) continue;
+        if (!collision(entity, objects[i])) continue;
 
         while (collision(entity, objects[i])) {
             if (entity.x < objects[i].x) {
@@ -175,19 +174,23 @@ function processWallCollision(entity) {
             }
         }
         entity.x = Math.round(entity.x);
+        return objects[i];
     }
+    return DUMMY_CELL;
 }
 
 function processGroundCollision(entity) {
     for (var i = 0; i < objects.length; i++) {
         if (objects[i] == entity) continue;
         if (!objects[i].isPlatform()) continue;
+        if (!collision(entity, objects[i])) continue;
 
         while (collision(entity, objects[i])) {
             entity.y--;
         }
         entity.y = Math.round(entity.y);
     }
+    return tileUnder(entity);
 }
 
 function collision(entity1, entity2) {

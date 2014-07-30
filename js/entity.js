@@ -77,6 +77,9 @@ Entity.prototype = {
     isBouncy : function() {
         return false;
     },
+    isFatal : function() {
+        return false;
+    },
     getState : function() {
         if (this.dead) return STATE.DEAD;
 
@@ -217,6 +220,9 @@ Water.prototype = Object.create(Block.prototype);
 Water.prototype.getState = function() {
     return this.frozen ? STATE.FROZEN : STATE.IDLE;
 };
+Water.prototype.isFatal = function() {
+    return !this.frozen;
+};
 Water.prototype.__defineGetter__('type', function() {
     return this.frozen ? TYPE.ICE : TYPE.WATER;
 });
@@ -301,10 +307,13 @@ Bear.prototype.getState = function() {
     }
 };
 Bear.prototype.isPlatform = function() {
-    return this.sleeping;
+    return true;
 };
 Bear.prototype.isBouncy = function() {
     return this.sleeping;
+};
+Bear.prototype.isFatal = function() {
+    return !this.sleeping;
 };
 Bear.prototype.processSpring = function() {
     this.sleeping = false; return true;
