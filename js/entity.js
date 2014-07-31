@@ -109,11 +109,11 @@ Entity.prototype = {
         this.sprite.render(context);
         context.restore();
     },
-    moveRight : function() {
-        this.xSpeed = this.velocity;
+    moveRight : function(ratio) {
+        this.xSpeed = Math.min(this.xSpeed + this.velocity * ratio, this.velocity);
     },
-    moveLeft : function() {
-        this.xSpeed = -this.velocity;
+    moveLeft : function(ratio) {
+        this.xSpeed = Math.max(this.xSpeed - this.velocity * ratio, -this.velocity);
     },
     jump : function() {
         this.ySpeed = -this.jumpSpeed;

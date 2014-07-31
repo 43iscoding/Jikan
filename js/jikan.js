@@ -78,10 +78,11 @@ function tick() {
 
 function processInput() {
     //movement
+    var movementRatio = tileUnder(player).type == TYPE.ICE ? ICE_SLIDING : 1;
     if (input.isPressed(input.keys.RIGHT.key)) {
-        player.moveRight();
+        player.moveRight(movementRatio);
     } else if (input.isPressed(input.keys.LEFT.key)) {
-        player.moveLeft();
+        player.moveLeft(movementRatio);
     }
     if (input.isPressed(input.keys.UP.key) || input.isPressed(input.keys.SPACE.key)) {
         if (grounded(player)) player.jump();
@@ -126,6 +127,10 @@ function updateEntity(entity) {
 
     entity.x = Math.round(entity.x + entity.xSpeed);
     var wall = processWallCollision(entity);
+
+    if (wall.isPlatform()) {
+        entity.xSpeed = 0;
+    }
 
     if (ground.isFatal() || wall.isFatal()) {
         entity.die();
