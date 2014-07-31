@@ -10,7 +10,7 @@ var TEST_MAP = "10W8H" +
     ".........." +
     ".........." +
     ".P........" +
-    ".T......B." +
+    ".T.....B.." +
     "<->....<->" +
     "|||^^^^|||" +
     "|||####|||" +
@@ -120,6 +120,7 @@ function updateEntity(entity) {
     if (entity.static) {
         return;
     }
+    entity.act();
     //process physics
 
     entity.y = Math.round(entity.y + entity.ySpeed);

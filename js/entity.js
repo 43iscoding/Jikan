@@ -65,6 +65,7 @@ Entity.prototype = {
     get type() {
         return this._type;
     },
+    act : function() {},
     updateSprite : function() {
         this.sprite.update(this.getState());
     },
@@ -280,6 +281,8 @@ function Bear(x, y) {
     frames[STATE.FALL_RIGHT] = [7];
     frames[STATE.FALL_LEFT] = [8];
     frames[STATE.SLEEPING] = [9];
+    this.switchDirection = 70;
+    this.actIndex = 0;
     //TODO: Bear spritesheet
     Entity.call(this, x, y, 22, 22, TYPE.BEAR, {name : 'player', pos : [0,0], frames: frames, speed: 2}, args);
 }
@@ -304,6 +307,22 @@ Bear.prototype.getState = function() {
         } else if (this.ySpeed > 0) {
             return STATE.FALL;
         } else return STATE.IDLE;
+    }
+};
+Bear.prototype.act = function() {
+    if (this.sleeping) return;
+    this.actIndex++;
+    if (this.actIndex < this.switchDirection) {
+        this.moveRight(1);
+    } else if (this.actIndex < this.switchDirection * 2) {
+        //wait
+    } else if (this.actIndex < this.switchDirection * 3) {
+        this.moveLeft(1);
+    } else if (this.actIndex < this.switchDirection * 4) {
+        //wait
+    } else {
+        //reset
+        this.actIndex = 0;
     }
 };
 Bear.prototype.isPlatform = function() {
