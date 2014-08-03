@@ -282,7 +282,7 @@ function Bear(x, y) {
     frames[STATE.FALL_LEFT] = [8];
     frames[STATE.SLEEPING] = [9];
     this.switchDirection = 70;
-    this.actIndex = 0;
+    this.actIndex = -1;
     //TODO: Bear spritesheet
     Entity.call(this, x, y, 22, 22, TYPE.BEAR, {name : 'player', pos : [0,0], frames: frames, speed: 2}, args);
 }
@@ -322,7 +322,7 @@ Bear.prototype.act = function() {
         //wait
     } else {
         //reset
-        this.actIndex = 0;
+        this.actIndex = -1;
     }
 };
 Bear.prototype.isPlatform = function() {
