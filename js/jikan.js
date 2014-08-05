@@ -76,6 +76,10 @@ function update() {
     }
     //process particles
     for (var j = particles.length - 1; j >= 0; j--) {
+        if (particles[j].type == TYPE.PARTICLE.SLEEP && season != SEASON.WINTER) {
+            particles.splice(j, 1);
+            continue;
+        }
         if (particles[j].updateSprite()) {
             particles.splice(j, 1);
         }

@@ -301,7 +301,7 @@ function Bear(x, y) {
     this.sleepCycle = 130;
     this.actIndex = -1;
     this.sleepIndex = 0;
-    Entity.call(this, x, y, 22, 22, TYPE.BEAR, {name : 'bear2', pos : [0,0], frames: frames, speed: 2}, args);
+    Entity.call(this, x, y, 22, 22, TYPE.BEAR, {name : 'bear', pos : [0,0], frames: frames, speed: 2}, args);
 }
 Bear.prototype = Object.create(Entity.prototype);
 Bear.prototype.getState = function() {
@@ -368,6 +368,7 @@ Bear.prototype.processWinter = function() {
 Bear.prototype.fallAsleep = function() {
     this.xSpeed = 0;
     this.sleeping = true;
+    this.sleepIndex = 0;
     return true;
 };
 Bear.prototype.wakeUp = function() {
