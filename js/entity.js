@@ -212,11 +212,12 @@ function Water(x, y, style) {
         style = 0;
     }
     var frames = [];
-    frames[STATE.FROZEN] = [5];
 
     if (style == 0) {
         frames[STATE.IDLE] = [0];
+        frames[STATE.FROZEN] = [6];
     } else {
+        frames[STATE.FROZEN] = [5];
         frames[STATE.IDLE] = [1,2,3,4];
     }
     Block.call(this, x, y, TYPE.WATER, { name : "tiles", pos : [0, TILE_SIZE], frames: frames, speed: 2});
