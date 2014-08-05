@@ -1,6 +1,7 @@
 (function() {
 
 var objects = [];
+var particles = [];
 var context;
 
 var season;
@@ -12,6 +13,7 @@ function init() {
 }
 
 window.init = init;
+window.addParticle = addParticle;
 
 function startLevel() {
     season = DEFAULT_SEASON;
@@ -62,8 +64,14 @@ function changeSeason(newSeason) {
 }
 
 function update() {
-    for (var i = 0; i < objects.length; i++) {
-        updateEntity(objects[i]);
+    objects.forEach(function(object) {
+        updateEntity(object);
+    });
+    //process particles
+    for (var i = particles.length - 1; i >= 0; i--) {
+        if (particles[i].updateSprite()) {
+            particles.splice(i, 1);
+        }
     }
 }
 
@@ -138,6 +146,10 @@ function processWallCollision(entity) {
     return DUMMY_CELL;
 }
 
+function addParticle(type, x, y) {
+    particles.push(spawn(type, x, y));
+}
+
 function processGroundCollision(entity) {
     for (var i = 0; i < objects.length; i++) {
         if (objects[i] == entity) continue;
@@ -166,9 +178,14 @@ function intersect(x1, y1, w1, h1, x2, y2, w2, h2) {
 
 function render() {
     renderBackground();
-    for (var i = 0; i < objects.length; i++) {
-        objects[i].render(context);
-    }
+
+    objects.forEach(function(object) {
+        object.render(context);
+    });
+
+    particles.forEach(function(particle) {
+        particle.render(context);
+    });
 }
 
 function renderBackground() {

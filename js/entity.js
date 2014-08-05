@@ -28,7 +28,10 @@ window.TYPE = {
     ICE : 'ICE',
     GROUND : 'GROUND',
     SUNFLOWER : 'SUNFLOWER',
-    BEAR : 'BEAR'
+    BEAR : 'BEAR',
+    PARTICLE : {
+        SLEEP : 'SLEEP'
+    }
 };
 
 /*****************************************
@@ -67,7 +70,7 @@ Entity.prototype = {
     },
     act : function() {},
     updateSprite : function() {
-        this.sprite.update(this.getState());
+        return this.sprite.update(this.getState());
     },
     die : function() {
         this.dead = true;
@@ -179,8 +182,7 @@ Player.prototype = Object.create(Entity.prototype);
  ***************************************************/
 
 function Block(x, y, type, sprite) {
-    var args = { static : true };
-    Entity.call(this, x, y, TILE_SIZE, TILE_SIZE, type, sprite, args);
+    Entity.call(this, x, y, TILE_SIZE, TILE_SIZE, type, sprite, { static : true });
 }
 Block.prototype = Object.create(Entity.prototype);
 Block.prototype.isPlatform = function() {
@@ -283,8 +285,9 @@ function Bear(x, y) {
     frames[STATE.FALL_LEFT] = [8];
     frames[STATE.SLEEPING] = [9];
     this.switchDirection = 70;
+    this.sleepCycle = 130;
     this.actIndex = -1;
-    //TODO: Bear spritesheet
+    this.sleepIndex = 0;
     Entity.call(this, x, y, 22, 22, TYPE.BEAR, {name : 'bear2', pos : [0,0], frames: frames, speed: 2}, args);
 }
 Bear.prototype = Object.create(Entity.prototype);
@@ -311,7 +314,12 @@ Bear.prototype.getState = function() {
     }
 };
 Bear.prototype.act = function() {
-    if (this.sleeping) return;
+    if (this.sleeping) {
+        if (this.sleepIndex == 0) addParticle(TYPE.PARTICLE.SLEEP, this.x - 10, this.y - this.height - 8);
+        this.sleepIndex++;
+        if (this.sleepIndex == this.sleepCycle) this.sleepIndex = 0;
+        return;
+    }
     this.actIndex++;
     if (this.actIndex < this.switchDirection) {
         this.moveRight(1);
@@ -355,6 +363,26 @@ Bear.prototype.wakeUp = function() {
 };
 
 /****************************************************
+                    Particle object
+ ****************************************************/
+function Particle(x, y, width, height, type, sprite) {
+    sprite.once = true;
+    Entity.call(this, x, y, width, height, type, sprite, { static : true });
+}
+Particle.prototype = Object.create(Entity.prototype);
+
+/****************************************************
+                 Sleep particle object
+ ****************************************************/
+
+function ParticleSleep(x, y) {
+    var frames = [];
+    frames[STATE.IDLE] = [0, 1, 2, 3];
+    Particle.call(this, x, y, 32, 32, TYPE.PARTICLE.SLEEP, {name : 'particles', pos: [0, 0], frames: frames, speed : 1})
+}
+ParticleSleep.prototype = Object.create(Particle.prototype);
+
+/****************************************************
                 Spawn interface function
  ****************************************************/
 
@@ -365,6 +393,7 @@ window.spawn = function(type, x, y, style) {
         case TYPE.WATER : return new Water(x, y, style);
         case TYPE.SUNFLOWER : return new Sunflower(x, y);
         case TYPE.BEAR : return new Bear(x, y);
+        case TYPE.PARTICLE.SLEEP : return new ParticleSleep(x, y);
         default: {
             console.log("Cannot spawn: unknown type - " + type);
         }

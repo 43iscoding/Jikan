@@ -10,6 +10,7 @@
         this.once = once == undefined ? false : once;
         this.lastState = STATE.IDLE;
         this.stateFrames = frames[STATE.IDLE];
+        this.done = false;
     }
 
     Sprite.prototype = {
@@ -21,13 +22,19 @@
             }
             this.index += (fps * this.speed) / 1000;
             this.frame = this.stateFrames[0] + Math.floor(this.index) % this.stateFrames.length;
+            if (this.once && Math.floor(this.index) == this.stateFrames.length) {
+                this.done = true;
+                return true;
+            }
             this.lastState = state;
+            return false;
         },
         reset: function () {
             this.index = 0;
             this.frame = 0;
         },
         render: function (context) {
+            if (this.done) return;
             var x = this.pos[0];
             var y = this.pos[1];
             x += this.frame * this.size[0];
