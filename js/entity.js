@@ -284,7 +284,7 @@ function Bear(x, y) {
     this.switchDirection = 70;
     this.actIndex = -1;
     //TODO: Bear spritesheet
-    Entity.call(this, x, y, 21, 32, TYPE.BEAR, {name : 'bear', pos : [0,0], frames: frames, speed: 2}, args);
+    Entity.call(this, x, y, 22, 22, TYPE.BEAR, {name : 'bear2', pos : [0,0], frames: frames, speed: 2}, args);
 }
 Bear.prototype = Object.create(Entity.prototype);
 Bear.prototype.getState = function() {
