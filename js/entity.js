@@ -71,6 +71,7 @@ Entity.prototype = {
     },
     die : function() {
         this.dead = true;
+        this.updateSprite();
     },
     isPlatform : function() {
         return false;
@@ -335,13 +336,22 @@ Bear.prototype.isFatal = function() {
     return !this.sleeping;
 };
 Bear.prototype.processSpring = function() {
-    this.sleeping = false; return true;
+    return this.wakeUp();
 };
 Bear.prototype.processSummer = function() {
-    this.sleeping = false; return true;
+    return this.wakeUp();
 };
 Bear.prototype.processWinter = function() {
-    this.sleeping = true; return true;
+    return this.fallAsleep();
+};
+Bear.prototype.fallAsleep = function() {
+    this.xSpeed = 0;
+    this.sleeping = true;
+    return true;
+};
+Bear.prototype.wakeUp = function() {
+    this.sleeping = false;
+    return true;
 };
 
 /****************************************************
