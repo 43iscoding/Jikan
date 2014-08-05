@@ -165,7 +165,7 @@ function processWallCollision(entity) {
             while (collision(entity, objects[i])) {
                 if (entity.x < objects[i].x) {
                     entity.x--;
-                } else {
+                } else if (entity.x > objects[i].x) {
                     entity.x++;
                 }
             }
@@ -187,7 +187,12 @@ function processGroundCollision(entity) {
         if (!collision(entity, objects[i])) continue;
 
         while (collision(entity, objects[i])) {
-            entity.y--;
+            if (entity.y < objects[i].y) {
+                entity.y--;
+            } else if (entity.y > objects[i].y) {
+                entity.y++;
+                entity.ySpeed = 0;
+            }
         }
         entity.y = Math.round(entity.y);
     }
