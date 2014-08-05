@@ -3,18 +3,7 @@
 var objects = [];
 var context;
 
-var player;
 var season;
-
-var TEST_MAP = "10W8H" +
-    ".........." +
-    ".........." +
-    ".P........" +
-    ".T.....B.." +
-    "<->....<->" +
-    "|||^^^^|||" +
-    "|||####|||" +
-    "|||####|||";
 
 function init() {
     context = document.getElementById('canvas').getContext('2d');
@@ -26,50 +15,14 @@ window.init = init;
 
 function startLevel() {
     season = DEFAULT_SEASON;
-    objects = parseMap(TEST_MAP);
-}
-
-function parseMap(mapInfo) {
-    var width = mapInfo.substring(0,mapInfo.indexOf('W'));
-    var height = mapInfo.substring(mapInfo.indexOf('W') + 1, mapInfo.indexOf('H'));
-    var offset = mapInfo.indexOf('H') + 1;
-    var map = [];
-    for (var y = 0; y < height; y++) {
-        for (var x = 0; x < width; x++) {
-            parseTile(map, x, y, mapInfo[y * width + x % width + offset]);
-        }
-    }
-    return map;
-}
-
-function parseTile(map, x, y, tile) {
-    var type = null;
-    var mode = null;
-    switch (tile) {
-        case '.': return; //empty tile
-        case 'P': type = TYPE.PLAYER; break;
-        case '-': type = TYPE.GROUND; mode = 0; break;
-        case '<': type = TYPE.GROUND; mode = 1; break;
-        case '>': type = TYPE.GROUND; mode = 2; break;
-        case '|': type = TYPE.GROUND; mode = 3; break;
-        case '#': type = TYPE.WATER; mode = 0; break;
-        case '^': type = TYPE.WATER; mode = 1; break;
-        case 'T': type = TYPE.SUNFLOWER; break;
-        case 'B': type = TYPE.BEAR; break;
-        default : console.log('Unknown tile: ' + tile);
-    }
-    putTile(map, x, y, type, mode);
-}
-
-function putTile(objects, x, y, type, mode) {
-    var object = spawn(type, x * TILE_SIZE, y * TILE_SIZE, mode);
-    objects.push(object);
-    if (type == TYPE.PLAYER) {
-        player = object;
-    }
+    objects = parseMap(MAPS.TEST_MAP);
 }
 
 function tick() {
+    if (player.dead) {
+        setTimeout(init, 500);
+        return;
+    }
     processInput();
     update();
     render();
