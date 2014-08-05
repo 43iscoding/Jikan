@@ -18,11 +18,15 @@
 
     function loaded() {
         var context = document.getElementById('canvas').getContext('2d');
-        context.font = "50px Aoyagi bold";
-        context.textAlign = "center";
         context.fillStyle = "black";
         context.fillRect(0, 0, WIDTH, HEIGHT);
-        context.fillStyle = "#D33";
+        context.font = "53px Aoyagi bold";
+        context.textAlign = "center";
+        context.fillStyle = "#00005A";
+        context.fillText("じかん", WIDTH / 2, HEIGHT / 2);
+        context.font = "50px Aoyagi bold";
+        context.textAlign = "center";
+        context.fillStyle = "#DDB500";
         context.fillText("じかん", WIDTH / 2, HEIGHT / 2);
         setTimeout(proceed, 1000);
     }
