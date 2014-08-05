@@ -2,7 +2,6 @@ Engine:
 .Water interaction
 .Parallax background
 .Collisions from below & bear
-.Don't allow player to leave screen
 .Resize game screen to level size
 
 Content:
@@ -24,6 +23,7 @@ Refactor:
 
 Misc:
 .Full screen
+.Remove particles when inappropriate season (ex. ZZZ at summer)
 
 Ideas:
 .Seasons as limited area aura (Braid ring)

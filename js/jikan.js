@@ -22,6 +22,7 @@ function startLevel() {
     levelComplete = false;
     season = DEFAULT_SEASON;
     objects = parseMap(getMap());
+    particles = [];
 }
 
 function tick() {
@@ -37,6 +38,7 @@ function tick() {
 }
 
 function processInput() {
+    if (levelComplete) return;
     //movement
     var movementRatio = tileUnder(player).type == TYPE.ICE ? ICE_SLIDING : 1;
     if (input.isPressed(input.keys.RIGHT.key)) {
@@ -146,6 +148,11 @@ function tileUnder(entity) {
 }
 
 function processWallCollision(entity) {
+    if (entity.x < 0) {
+        entity.x = 0;
+    } else if (entity.x > WIDTH - entity.width) {
+        entity.x = WIDTH - entity.width;
+    }
     for (var i = 0; i < objects.length; i++) {
         if (objects[i] == entity) continue;
         if (!collision(entity, objects[i])) continue;
