@@ -1,6 +1,9 @@
+Next:
+.Parallax background
+.Background art for desert
+
 Engine:
 .Water interaction
-.Parallax background
 .Resize game screen to level size
 
 Content:
@@ -14,7 +17,6 @@ Art:
 .Player
 .Tiles
 .Sunflower
-.Background
 .Season panel (Howl doorbell?)
 
 Refactor:
