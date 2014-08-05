@@ -28,6 +28,7 @@ window.TYPE = {
     ICE : 'ICE',
     GROUND : 'GROUND',
     SUNFLOWER : 'SUNFLOWER',
+    FINISH : 'FINISH',
     BEAR : 'BEAR',
     PARTICLE : {
         SLEEP : 'SLEEP'
@@ -39,8 +40,8 @@ window.TYPE = {
  ****************************************/
 
 function Entity(x, y, width, height, type, sprite, args) {
-    this.x = x;
-    this.y = y;
+    this.x = x + TILE_SIZE / 2 - width / 2;
+    this.y = y + TILE_SIZE - height;
     this.width = width;
     this.height = height;
     this._type = type;
@@ -267,6 +268,18 @@ Sunflower.prototype.processWinter = function() {
     this.wither = true; return true;
 };
 
+function Finish(x,y) {
+    var frames = [];
+    frames[STATE.IDLE] = [0, 1, 2, 3, 4, 5];
+    Entity.call(this, x, y, 11, 21, TYPE.FINISH,
+        {name : 'tiles', pos: [0, TILE_SIZE * 3], frames: frames, speed : 2},
+        {static : true});
+}
+Finish.prototype = Object.create(Entity.prototype);
+Finish.prototype.isPlatform = function() {
+    return false;
+};
+
 /****************************************************
                     Bear object.
  ****************************************************/
@@ -394,6 +407,7 @@ window.spawn = function(type, x, y, style) {
         case TYPE.SUNFLOWER : return new Sunflower(x, y);
         case TYPE.BEAR : return new Bear(x, y);
         case TYPE.PARTICLE.SLEEP : return new ParticleSleep(x, y);
+        case TYPE.FINISH : return new Finish(x, y);
         default: {
             console.log("Cannot spawn: unknown type - " + type);
         }

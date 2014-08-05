@@ -6,6 +6,9 @@ var context;
 
 var season;
 
+var levelComplete = false;
+var winTimer = null;
+
 function init() {
     context = document.getElementById('canvas').getContext('2d');
     startLevel();
@@ -16,8 +19,9 @@ window.init = init;
 window.addParticle = addParticle;
 
 function startLevel() {
+    levelComplete = false;
     season = DEFAULT_SEASON;
-    objects = parseMap(MAPS.TEST_MAP);
+    objects = parseMap(getMap());
 }
 
 function tick() {
@@ -28,6 +32,7 @@ function tick() {
     processInput();
     update();
     render();
+    if (levelComplete) win();
     setTimeout(tick, 1000 / fps);
 }
 
@@ -64,15 +69,24 @@ function changeSeason(newSeason) {
 }
 
 function update() {
-    objects.forEach(function(object) {
-        updateEntity(object);
-    });
+    for (var i = objects.length - 1; i >= 0; i--) {
+        updateEntity(objects[i]);
+    }
     //process particles
-    for (var i = particles.length - 1; i >= 0; i--) {
-        if (particles[i].updateSprite()) {
-            particles.splice(i, 1);
+    for (var j = particles.length - 1; j >= 0; j--) {
+        if (particles[j].updateSprite()) {
+            particles.splice(j, 1);
         }
     }
+}
+
+function win() {
+    if (winTimer != null) return;
+    winTimer = setTimeout(function() {
+        advanceLevel();
+        startLevel();
+        winTimer = null;
+    }, 1000);
 }
 
 function updateEntity(entity) {
@@ -92,6 +106,10 @@ function updateEntity(entity) {
 
     if (wall.isPlatform()) {
         entity.xSpeed = 0;
+    }
+
+    if (wall.type == TYPE.FINISH && entity.type == TYPE.PLAYER && !levelComplete) {
+        levelComplete = true;
     }
 
     if (ground.isFatal() || wall.isFatal()) {
@@ -130,14 +148,15 @@ function tileUnder(entity) {
 function processWallCollision(entity) {
     for (var i = 0; i < objects.length; i++) {
         if (objects[i] == entity) continue;
-        if (!objects[i].isPlatform()) continue;
         if (!collision(entity, objects[i])) continue;
 
-        while (collision(entity, objects[i])) {
-            if (entity.x < objects[i].x) {
-                entity.x--;
-            } else {
-                entity.x++;
+        if (objects[i].isPlatform()) {
+            while (collision(entity, objects[i])) {
+                if (entity.x < objects[i].x) {
+                    entity.x--;
+                } else {
+                    entity.x++;
+                }
             }
         }
         entity.x = Math.round(entity.x);
@@ -186,13 +205,30 @@ function render() {
     particles.forEach(function(particle) {
         particle.render(context);
     });
+
+    renderUI();
 }
 
 function renderBackground() {
     context.drawImage(res.get('background'), 0, 0);
-    context.fillStyle = '#fff';
-    context.font = '17px Aoyagi bold';
-    context.fillText(season, WIDTH / 10 * 9, HEIGHT / 20);
+}
+
+function renderUI() {
+    //season
+    context.textAlign = "center";
+    context.fillStyle = "#00005A";
+    context.font = '19px Aoyagi bold';
+    context.fillText(season, WIDTH / 9 * 8 + 1, HEIGHT / 17 - 1);
+    context.fillStyle = "#DDB500";
+    context.fillText(season, WIDTH / 9 * 8, HEIGHT / 17);
+
+    if (levelComplete) {
+        context.font = "30px Aoyagi bold";
+        context.fillStyle = "#00005A";
+        context.fillText("LEVEL COMPLETE", WIDTH / 2 + 1, HEIGHT / 2 - 1);
+        context.fillStyle = "#DDB500";
+        context.fillText("LEVEL COMPLETE", WIDTH / 2, HEIGHT / 2);
+    }
 }
 
 }());

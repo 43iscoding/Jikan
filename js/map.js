@@ -6,18 +6,84 @@
         GROUND : '-',
         WATER : '#',
         SUNFLOWER : 'T',
-        BEAR : 'B'
+        BEAR : 'B',
+        FINISH : 'F'
     };
-    window.MAPS = {
-        TEST_MAP : "10W8H" +
-            ".........." +
-            ".........." +
-            ".P........" +
-            ".T.....B.." +
-            "---....---" +
-            "---####---" +
-            "---####---" +
-            "---####---"
+
+    var LEVEL_0 = "10W8H" +
+        ".........." +
+        ".........." +
+        ".........." +
+        ".........." +
+        "P........F" +
+        "----------" +
+        "----------" +
+        "----------";
+
+    var LEVEL_1 = "10W8H" +
+        ".........." +
+        ".........." +
+        ".........." +
+        "P..B.....F" +
+        "----------" +
+        "----------" +
+        "----------" +
+        "----------";
+
+    var LEVEL_2 = "10W8H" +
+        ".........." +
+        ".........." +
+        ".........." +
+        "P........F" +
+        "----..----" +
+        "----##----" +
+        "----##----" +
+        "----##----";
+
+    var LEVEL_3 = "10W8H" +
+        ".........." +
+        ".........." +
+        ".........." +
+        "P........F" +
+        "--######--" +
+        "--######--" +
+        "--######--" +
+        "--######--";
+
+    var LEVEL_4 = "10W8H" +
+        ".........." +
+        ".........." +
+        ".P........" +
+        ".T.....B.F" +
+        "---....---" +
+        "---####---" +
+        "---####---" +
+        "---####---";
+
+    var END = "10W8H" +
+        ".........." +
+        "---.-.-..-" +
+        "-...-.--.-" +
+        "---.-.-.--" +
+        "-...-.-..-" +
+        "-...-.-..-" +
+        ".....P...." +
+        "----------";
+
+    var currentLevel = 0;
+
+    window.MAPS = [LEVEL_0, LEVEL_1, LEVEL_2, LEVEL_3, LEVEL_4, END];
+
+    window.getCurrentLevel = function() {
+        return currentLevel;
+    };
+
+    window.advanceLevel = function() {
+        currentLevel = ++currentLevel % MAPS.length;
+    };
+
+    window.getMap = function() {
+        return MAPS[getCurrentLevel()];
     };
 
     function parseMap(mapInfo) {
@@ -44,6 +110,7 @@
             switch (tile) {
                 case TILE.EMPTY: return; //empty tile
                 case TILE.PLAYER: type = TYPE.PLAYER; break;
+                case TILE.FINISH: type = TYPE.FINISH; break;
                 case TILE.GROUND: {
                     type = TYPE.GROUND;
                     if (this.get(x, y - 1) == TILE.GROUND) {

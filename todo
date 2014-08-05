@@ -1,6 +1,9 @@
 Engine:
 .Water interaction
 .Parallax background
+.Collisions from below & bear
+.Don't allow player to leave screen
+.Resize game screen to level size
 
 Content:
 .Carnivorous plants
