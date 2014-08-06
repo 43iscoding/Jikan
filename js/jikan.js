@@ -226,7 +226,9 @@ function render() {
 }
 
 function renderBackground() {
-    context.drawImage(res.get('background'), 0, 0);
+    context.drawImage(res.get('background'), player.x / 12, HEIGHT * 2, WIDTH, HEIGHT, 0, 0, WIDTH, HEIGHT);
+    context.drawImage(res.get('background'), player.x / 7, HEIGHT, WIDTH, HEIGHT, 0, 0, WIDTH, HEIGHT);
+    context.drawImage(res.get('background'), player.x / 4, 0, WIDTH, HEIGHT, 0, 0, WIDTH, HEIGHT);
 }
 
 function renderUI() {
