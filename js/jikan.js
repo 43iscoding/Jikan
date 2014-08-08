@@ -124,10 +124,7 @@ function updateEntity(entity) {
         levelComplete = true;
     }
 
-    if (ground.isFatal() || wall.isFatal()) {
-        entity.die();
-        entity.static = true;
-    }
+    applyCollision(entity, ground, wall);
 
     if (ground.type != TYPE.ICE) {
         entity.applyFriction(FRICTION);
@@ -139,6 +136,21 @@ function updateEntity(entity) {
         entity.ySpeed = 0;
     } else {
         entity.applyGravity(GRAVITY);
+    }
+}
+
+function applyCollision(entity, ground, wall) {
+    collisionEffect(entity, ground);
+    collisionEffect(entity, wall);
+    collisionEffect(ground, entity);
+    collisionEffect(wall, entity);
+}
+
+function collisionEffect(entity, withEntity) {
+    if (entity.static) return;
+    if (withEntity.isFatal()) {
+        entity.die();
+        entity.static = true;
     }
 }
 

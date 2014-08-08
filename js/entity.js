@@ -71,6 +71,7 @@ Entity.prototype = {
     },
     act : function() {},
     updateSprite : function() {
+        if (this.sprite == null || this.sprite == undefined) return;
         return this.sprite.update(this.getState());
     },
     die : function() {
@@ -177,6 +178,9 @@ function Player(x, y) {
     Entity.call(this, x, y, 22, 22, TYPE.PLAYER, {name : 'player', pos : [0,0], frames: frames, speed: 2}, args);
 }
 Player.prototype = Object.create(Entity.prototype);
+Player.prototype.isPlatform = function() {
+    return true;
+};
 
 /***************************************************
     Generic block object. Not affected by physics.
