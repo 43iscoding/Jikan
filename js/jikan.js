@@ -17,6 +17,12 @@ function init() {
 
 window.init = init;
 window.addParticle = addParticle;
+window.levelComplete = function() {
+    return levelComplete;
+};
+window.getSeason = function() {
+    return season;
+};
 
 function startLevel() {
     levelComplete = false;
@@ -32,7 +38,7 @@ function tick() {
     }
     processInput();
     update();
-    render();
+    render(context, objects, particles);
     if (levelComplete) win();
     setTimeout(tick, 1000 / fps);
 }
@@ -74,11 +80,18 @@ function update() {
     for (var i = objects.length - 1; i >= 0; i--) {
         updateEntity(objects[i]);
     }
+
     //process particles
     for (var j = particles.length - 1; j >= 0; j--) {
         if (updateParticle(particles[j])) {
             particles.splice(j, 1);
         }
+    }
+
+    //special
+    if (season == SEASON.WINTER) {
+        //spawn snow
+        particles.push(spawn(TYPE.PARTICLE.SNOW, Math.random() * WIDTH, -50));
     }
 }
 
@@ -99,6 +112,9 @@ function updateParticle(particle) {
     if (particle.updateSprite()) {
         return true;
     }
+
+    if (particle.xSpeed > 0) particle.x += particle.xSpeed;
+    if (particle.ySpeed > 0) particle.y += particle.ySpeed;
 }
 
 function updateEntity(entity) {
@@ -229,42 +245,6 @@ function intersect(x1, y1, w1, h1, x2, y2, w2, h2) {
         (y1 + h1 < y2));
 }
 
-function render() {
-    renderBackground();
 
-    objects.forEach(function(object) {
-        object.render(context);
-    });
-
-    particles.forEach(function(particle) {
-        particle.render(context);
-    });
-
-    renderUI();
-}
-
-function renderBackground() {
-    context.drawImage(res.get('background'), player.x / 12, HEIGHT * 2, WIDTH, HEIGHT, 0, 0, WIDTH, HEIGHT);
-    context.drawImage(res.get('background'), player.x / 7, HEIGHT, WIDTH, HEIGHT, 0, 0, WIDTH, HEIGHT);
-    context.drawImage(res.get('background'), player.x / 4, 0, WIDTH, HEIGHT, 0, 0, WIDTH, HEIGHT);
-}
-
-function renderUI() {
-    //season
-    context.textAlign = "center";
-    context.fillStyle = "#00005A";
-    context.font = '19px Aoyagi bold';
-    context.fillText(season, WIDTH / 9 * 8 + 1, HEIGHT / 17 - 1);
-    context.fillStyle = "#DDB500";
-    context.fillText(season, WIDTH / 9 * 8, HEIGHT / 17);
-
-    if (levelComplete) {
-        context.font = "30px Aoyagi bold";
-        context.fillStyle = "#00005A";
-        context.fillText("LEVEL COMPLETE", WIDTH / 2 + 1, HEIGHT / 2 - 1);
-        context.fillStyle = "#DDB500";
-        context.fillText("LEVEL COMPLETE", WIDTH / 2, HEIGHT / 2);
-    }
-}
 
 }());

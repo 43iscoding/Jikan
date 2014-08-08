@@ -1,3 +1,5 @@
+(function() {
+
 /****************************************************************************
     Every possible state of entities, which defines behaviour and sprite.
  ***************************************************************************/
@@ -31,12 +33,13 @@ window.TYPE = {
     FINISH : 'FINISH',
     BEAR : 'BEAR',
     PARTICLE : {
-        SLEEP : 'SLEEP'
+        SLEEP : 'SLEEP',
+        SNOW : 'SNOW'
     }
 };
 
 /*****************************************
-    Entity class. Every object in game.
+        Entity - Every object in game
  ****************************************/
 
 function Entity(x, y, width, height, type, sprite, args) {
@@ -154,13 +157,13 @@ Entity.prototype = {
 };
 
 /****************************************************
-                    Dummy cell object.
+                      Dummy cell
  ****************************************************/
 
 window.DUMMY_CELL = new Entity(0,0,0,0, TYPE.DUMMY);
 
 /****************************************************
-                    Player object.
+                        Player
  ****************************************************/
 function Player(x, y) {
     var args = { velocity : 2, jump : 3.5 };
@@ -183,7 +186,7 @@ Player.prototype.isPlatform = function() {
 };
 
 /***************************************************
-    Generic block object. Not affected by physics.
+                    Generic block
  ***************************************************/
 
 function Block(x, y, type, sprite) {
@@ -195,7 +198,7 @@ Block.prototype.isPlatform = function() {
 };
 
 /****************************************************
-                    Ground object.
+                        Ground
  ****************************************************/
 function Ground(x, y, style) {
     if (style == undefined || style < 0 || style > 3) {
@@ -208,7 +211,7 @@ function Ground(x, y, style) {
 Ground.prototype = Object.create(Block.prototype);
 
 /****************************************************
-                    Water/Ice object.
+                       Water/Ice
  ****************************************************/
 
 function Water(x, y, style) {
@@ -247,7 +250,7 @@ Water.prototype.processWinter = function() {
 };
 
 /****************************************************
-                    Sunflower object.
+                      Sunflower
  ****************************************************/
 
 function Sunflower(x,y) {
@@ -286,7 +289,7 @@ Finish.prototype.isPlatform = function() {
 };
 
 /****************************************************
-                    Bear object.
+                         Bear
  ****************************************************/
 
 function Bear(x, y) {
@@ -382,14 +385,19 @@ Bear.prototype.wakeUp = function() {
 };
 
 /****************************************************
-                    Particle object
+                        Particle
  ****************************************************/
-function Particle(x, y, width, height, type, validSeasons, sprite) {
-    sprite.once = true;
+function Particle(x, y, width, height, type, validSeasons, sprite, args) {
+    if (args == undefined) args = {};
+    sprite.once = args == undefined ? true : (args['once'] == undefined ? true : args['once']);
+    args.static = true;
     this.validSeasons = validSeasons;
-    Entity.call(this, x, y, width, height, type, sprite, { static : true });
+    Entity.call(this, x, y, width, height, type, sprite, args);
 }
 Particle.prototype = Object.create(Entity.prototype);
+Particle.prototype.getState = function() {
+    return STATE.IDLE;
+};
 Particle.prototype.validFor = function(season) {
     for (var i = 0; i < this.validSeasons.length; i++) {
         if (this.validSeasons[i] == season) return true;
@@ -398,19 +406,34 @@ Particle.prototype.validFor = function(season) {
 };
 
 /****************************************************
-                 Sleep particle object
+                      Sleep particle
  ****************************************************/
 
 function ParticleSleep(x, y) {
     var frames = [];
     frames[STATE.IDLE] = [0, 1, 2, 3];
     var seasons = [SEASON.WINTER];
-    Particle.call(this, x, y, 32, 32, TYPE.PARTICLE.SLEEP, seasons, {name : 'particles', pos: [0, 0], frames: frames, speed : 1})
+    Particle.call(this, x, y, 32, 32, TYPE.PARTICLE.SLEEP, seasons,
+        {name : 'particles', pos: [0, 0], frames: frames, speed : 1});
 }
 ParticleSleep.prototype = Object.create(Particle.prototype);
 
 /****************************************************
-                Spawn interface function
+                      Snow particle
+ ****************************************************/
+
+function ParticleSnow(x, y) {
+    var frames = [];
+    var args = {once : false, ySpeed : 2};
+    frames[STATE.IDLE] = [0];
+    var seasons = [SEASON.WINTER];
+    Particle.call(this, x, y, 2, 2, TYPE.PARTICLE.SNOW, seasons,
+        {name : 'particles', pos : [0, TILE_SIZE], frames: frames, speed : 1}, args);
+}
+ParticleSnow.prototype = Object.create(Particle.prototype);
+
+/****************************************************
+                      Spawn function
  ****************************************************/
 
 window.spawn = function(type, x, y, style) {
@@ -421,9 +444,12 @@ window.spawn = function(type, x, y, style) {
         case TYPE.SUNFLOWER : return new Sunflower(x, y);
         case TYPE.BEAR : return new Bear(x, y);
         case TYPE.PARTICLE.SLEEP : return new ParticleSleep(x, y);
+        case TYPE.PARTICLE.SNOW: return new ParticleSnow(x, y);
         case TYPE.FINISH : return new Finish(x, y);
         default: {
             console.log("Cannot spawn: unknown type - " + type);
         }
     }
 };
+
+}());

@@ -1,3 +1,8 @@
+Snow:
+.Remove when hitting ground
+.Gradual remove on season change (more intensive at summer? chance to disappear)
+.Improve generation
+
 Engine:
 .Water interaction
 .Resize game screen to level size

@@ -6,6 +6,8 @@
 
     window.TILE_SIZE = 32;
 
+    window.DEBUG = true;
+
     window.cookie = {
         MUTED : "muted",
         HIGHSCORE : "highscore"
