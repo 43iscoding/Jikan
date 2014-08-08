@@ -380,11 +380,18 @@ Bear.prototype.wakeUp = function() {
 /****************************************************
                     Particle object
  ****************************************************/
-function Particle(x, y, width, height, type, sprite) {
+function Particle(x, y, width, height, type, validSeasons, sprite) {
     sprite.once = true;
+    this.validSeasons = validSeasons;
     Entity.call(this, x, y, width, height, type, sprite, { static : true });
 }
 Particle.prototype = Object.create(Entity.prototype);
+Particle.prototype.validFor = function(season) {
+    for (var i = 0; i < this.validSeasons.length; i++) {
+        if (this.validSeasons[i] == season) return true;
+    }
+    return false;
+};
 
 /****************************************************
                  Sleep particle object
@@ -393,7 +400,8 @@ Particle.prototype = Object.create(Entity.prototype);
 function ParticleSleep(x, y) {
     var frames = [];
     frames[STATE.IDLE] = [0, 1, 2, 3];
-    Particle.call(this, x, y, 32, 32, TYPE.PARTICLE.SLEEP, {name : 'particles', pos: [0, 0], frames: frames, speed : 1})
+    var seasons = [SEASON.WINTER];
+    Particle.call(this, x, y, 32, 32, TYPE.PARTICLE.SLEEP, seasons, {name : 'particles', pos: [0, 0], frames: frames, speed : 1})
 }
 ParticleSleep.prototype = Object.create(Particle.prototype);
 

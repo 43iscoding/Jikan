@@ -76,11 +76,7 @@ function update() {
     }
     //process particles
     for (var j = particles.length - 1; j >= 0; j--) {
-        if (particles[j].type == TYPE.PARTICLE.SLEEP && season != SEASON.WINTER) {
-            particles.splice(j, 1);
-            continue;
-        }
-        if (particles[j].updateSprite()) {
+        if (updateParticle(particles[j])) {
             particles.splice(j, 1);
         }
     }
@@ -93,6 +89,16 @@ function win() {
         startLevel();
         winTimer = null;
     }, 1000);
+}
+
+function updateParticle(particle) {
+    if (!particle.validFor(season)) {
+        return true;
+    }
+
+    if (particle.updateSprite()) {
+        return true;
+    }
 }
 
 function updateEntity(entity) {
