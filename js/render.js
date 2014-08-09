@@ -5,9 +5,11 @@ var objects;
 var particles;
 
 window.render = render;
-
-function render(_context, _objects, _particles) {
+window.initRenderer = function(_context) {
     context = _context;
+};
+
+function render(_objects, _particles) {
     objects = _objects;
     particles = _particles;
     renderBackground();
