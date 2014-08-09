@@ -91,7 +91,7 @@ function update() {
     //special
     if (season == SEASON.WINTER) {
         //spawn snow
-        particles.push(spawn(TYPE.PARTICLE.SNOW, Math.random() * WIDTH, -50));
+        particles.push(spawn(TYPE.PARTICLE.SNOW, Math.random() * WIDTH, 0));
     }
 }
 
@@ -115,6 +115,10 @@ function updateParticle(particle) {
 
     if (particle.xSpeed > 0) particle.x += particle.xSpeed;
     if (particle.ySpeed > 0) particle.y += particle.ySpeed;
+
+    if (offScreen(particle)) return true;
+
+    return false;
 }
 
 function updateEntity(entity) {
@@ -183,6 +187,12 @@ function tileUnder(entity) {
             (entity.x + entity.width > tile.x)) return tile;
     }
     return DUMMY_CELL;
+}
+
+function offScreen(entity) {
+    if (entity.x + entity.width < 0 || entity.y + entity.height < 0) return true;
+    if (entity.x > WIDTH || entity.y > HEIGHT) return true;
+    return false;
 }
 
 function processWallCollision(entity) {

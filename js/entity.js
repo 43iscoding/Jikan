@@ -43,8 +43,13 @@ window.TYPE = {
  ****************************************/
 
 function Entity(x, y, width, height, type, sprite, args) {
-    this.x = x + TILE_SIZE / 2 - width / 2;
-    this.y = y + TILE_SIZE - height;
+    if (args != undefined && args.overrideCoords) {
+        this.x = x;
+        this.y = y;
+    } else {
+        this.x = x + TILE_SIZE / 2 - width / 2;
+        this.y = y + TILE_SIZE - height;
+    }
     this.width = width;
     this.height = height;
     this._type = type;
@@ -391,6 +396,7 @@ function Particle(x, y, width, height, type, validSeasons, sprite, args) {
     if (args == undefined) args = {};
     sprite.once = args == undefined ? true : (args['once'] == undefined ? true : args['once']);
     args.static = true;
+    args.overrideCoords = true;
     this.validSeasons = validSeasons;
     Entity.call(this, x, y, width, height, type, sprite, args);
 }
@@ -424,9 +430,9 @@ ParticleSleep.prototype = Object.create(Particle.prototype);
 
 function ParticleSnow(x, y) {
     var frames = [];
-    var args = {once : false, ySpeed : 2};
+    var args = {once : false, ySpeed : 1};
     frames[STATE.IDLE] = [0];
-    var seasons = [SEASON.WINTER];
+    var seasons = [SEASON.SPRING, SEASON.SUMMER, SEASON.AUTUMN, SEASON.WINTER];
     Particle.call(this, x, y, 2, 2, TYPE.PARTICLE.SNOW, seasons,
         {name : 'particles', pos : [0, TILE_SIZE], frames: frames, speed : 1}, args);
 }
