@@ -57,7 +57,7 @@ window.collision = {
         return DUMMY_CELL;
     },
     collision : collision,
-    tileUnder : tileUnder,
+    tileUnder : tileUnder
 };
 
 function tileUnder(entity) {
