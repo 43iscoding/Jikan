@@ -433,15 +433,21 @@ ParticleSleep.prototype = Object.create(Particle.prototype);
 
 function ParticleSnow(x, y) {
     var frames = [];
-    var args = {once : false, ySpeed : 1};
+    var args = {once : false, ySpeed : 0.6};
     frames[STATE.IDLE] = [0];
     var seasons = [SEASON.SPRING, SEASON.SUMMER, SEASON.AUTUMN, SEASON.WINTER];
+    this.chanceToMove = 0.05;
     Particle.call(this, x, y, 2, 2, TYPE.PARTICLE.SNOW, seasons,
         {name : 'particles', pos : [0, TILE_SIZE], frames: frames, speed : 1}, args);
 }
 ParticleSnow.prototype = Object.create(Particle.prototype);
 ParticleSnow.prototype.destroyOnCollision = function() {
     return true;
+};
+ParticleSnow.prototype.act = function() {
+    if (Math.random() < this.chanceToMove) {
+        this.x += Math.random() < .5 ? 1 : -1;
+    }
 };
 
 /****************************************************

@@ -127,6 +127,8 @@ function updateParticle(particle) {
         }
     }
 
+    particle.act();
+
     return false;
 }
 
