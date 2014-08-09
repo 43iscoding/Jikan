@@ -118,6 +118,13 @@ function updateParticle(particle) {
 
     if (offScreen(particle)) return true;
 
+    if (particle.destroyOnCollision()) {
+        for (var i = 0; i < objects.length; i++) {
+            if (!objects[i].isPlatform()) continue;
+            if (collision(particle, objects[i])) return true;
+        }
+    }
+
     return false;
 }
 
@@ -231,7 +238,7 @@ function processGroundCollision(entity) {
         if (!collision(entity, objects[i])) continue;
 
         while (collision(entity, objects[i])) {
-            if (entity.y < objects[i].y) {
+            if (entity.y <= objects[i].y) {
                 entity.y--;
             } else if (entity.y > objects[i].y) {
                 entity.y++;

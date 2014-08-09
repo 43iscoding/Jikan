@@ -404,6 +404,9 @@ Particle.prototype = Object.create(Entity.prototype);
 Particle.prototype.getState = function() {
     return STATE.IDLE;
 };
+Particle.prototype.destroyOnCollision = function() {
+    return false;
+};
 Particle.prototype.validFor = function(season) {
     for (var i = 0; i < this.validSeasons.length; i++) {
         if (this.validSeasons[i] == season) return true;
@@ -437,6 +440,9 @@ function ParticleSnow(x, y) {
         {name : 'particles', pos : [0, TILE_SIZE], frames: frames, speed : 1}, args);
 }
 ParticleSnow.prototype = Object.create(Particle.prototype);
+ParticleSnow.prototype.destroyOnCollision = function() {
+    return true;
+};
 
 /****************************************************
                       Spawn function
