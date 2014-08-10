@@ -132,9 +132,7 @@ function updateParticle(particle) {
         }
     }
 
-    particle.act();
-
-    return false;
+    return particle.act();
 }
 
 function updateEntity(entity) {

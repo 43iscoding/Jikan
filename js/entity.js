@@ -407,6 +407,9 @@ Particle.prototype.getState = function() {
 Particle.prototype.destroyOnCollision = function() {
     return false;
 };
+Particle.prototype.act = function() {
+    return false;
+};
 Particle.prototype.validFor = function(season) {
     for (var i = 0; i < this.validSeasons.length; i++) {
         if (this.validSeasons[i] == season) return true;
@@ -445,8 +448,16 @@ ParticleSnow.prototype.destroyOnCollision = function() {
     return true;
 };
 ParticleSnow.prototype.act = function() {
-    if (Math.random() < this.chanceToMove) {
-        this.x += Math.random() < .5 ? 1 : -1;
+    switch (getSeason()) {
+        case SEASON.WINTER : {
+            if (Math.random() < this.chanceToMove) {
+                this.x += Math.random() < .5 ? 1 : -1;
+            }
+            return false;
+        }
+        case SEASON.AUTUMN : return Math.random() < 0.0125;
+        case SEASON.SPRING : return Math.random() < 0.025;
+        case SEASON.SUMMER : return Math.random() < 0.05;
     }
 };
 
