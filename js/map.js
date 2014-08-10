@@ -7,7 +7,8 @@
         WATER : '#',
         SUNFLOWER : 'T',
         BEAR : 'B',
-        FINISH : 'F'
+        FINISH : 'F',
+        SPIKE : '^'
     };
 
     var LEVEL_0 = "10W8H" +
@@ -36,9 +37,9 @@
         ".........." +
         "P........F" +
         "----..----" +
-        "----##----" +
-        "----##----" +
-        "----##----";
+        "----^^----" +
+        "----------" +
+        "----------";
 
     var LEVEL_3 = "10W8H" +
         ".........." +
@@ -51,6 +52,16 @@
         "--######--";
 
     var LEVEL_4 = "10W8H" +
+        ".........." +
+        ".........." +
+        ".........." +
+        "P........F" +
+        "--.....---" +
+        "--.....---" +
+        "--^^^^^---" +
+        "----------";
+
+    var LEVEL_5 = "10W8H" +
         ".........." +
         ".........." +
         ".P........" +
@@ -72,7 +83,7 @@
 
     var currentLevel = 0;
 
-    window.MAPS = [LEVEL_0, LEVEL_1, LEVEL_2, LEVEL_3, LEVEL_4, END];
+    window.MAPS = [LEVEL_0, LEVEL_1, LEVEL_2, LEVEL_3, LEVEL_4, LEVEL_5, END];
 
     window.getCurrentLevel = function() {
         return currentLevel;
@@ -111,6 +122,7 @@
                 case TILE.EMPTY: return; //empty tile
                 case TILE.PLAYER: type = TYPE.PLAYER; break;
                 case TILE.FINISH: type = TYPE.FINISH; break;
+                case TILE.SPIKE: type = TYPE.SPIKE; break;
                 case TILE.GROUND: {
                     type = TYPE.GROUND;
                     if (this.get(x, y - 1) == TILE.GROUND) {

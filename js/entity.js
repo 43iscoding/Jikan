@@ -29,6 +29,7 @@ window.TYPE = {
     WATER : 'WATER',
     ICE : 'ICE',
     GROUND : 'GROUND',
+    SPIKE : 'SPIKE',
     SUNFLOWER : 'SUNFLOWER',
     FINISH : 'FINISH',
     BEAR : 'BEAR',
@@ -195,8 +196,17 @@ Player.prototype.isPlatform = function() {
                     Generic block
  ***************************************************/
 
-function Block(x, y, type, sprite) {
-    Entity.call(this, x, y, TILE_SIZE, TILE_SIZE, type, sprite, { static : true });
+function Block(x, y, type, sprite, args) {
+    var width = TILE_SIZE;
+    var height = TILE_SIZE;
+    if (args) {
+        width = args['width'] == undefined ? TILE_SIZE : args['width'];
+        height = args['height'] == undefined ? TILE_SIZE : args['height'];
+        args.static = true;
+    } else {
+        args = {static : true};
+    }
+    Entity.call(this, x, y, width, height, type, sprite, args);
 }
 Block.prototype = Object.create(Entity.prototype);
 Block.prototype.isPlatform = function() {
@@ -390,6 +400,17 @@ Bear.prototype.wakeUp = function() {
     return true;
 };
 
+function Spike(x, y) {
+    var frames = [];
+    frames[STATE.IDLE] = [0];
+    var args = {width: TILE_SIZE, height : 10};
+    Block.call(this, x, y, TYPE.SPIKE, { name : "tiles", pos : [TILE_SIZE * 2, TILE_SIZE * 2], frames: frames, speed: 0}, args);
+}
+Spike.prototype = Object.create(Block.prototype);
+Spike.prototype.isFatal = function() {
+    return true;
+};
+
 /****************************************************
                         Particle
  ****************************************************/
@@ -490,6 +511,7 @@ window.spawn = function(type, x, y, style) {
     switch (type) {
         case TYPE.PLAYER : return new Player(x, y);
         case TYPE.GROUND : return new Ground(x, y, style);
+        case TYPE.SPIKE : return new Spike(x, y);
         case TYPE.WATER : return new Water(x, y, style);
         case TYPE.SUNFLOWER : return new Sunflower(x, y);
         case TYPE.BEAR : return new Bear(x, y);
