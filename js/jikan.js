@@ -9,7 +9,6 @@ var levelComplete = false;
 var winTimer = null;
 
 function init() {
-    initRenderer(document.getElementById('canvas').getContext('2d'));
     startLevel();
     tick();
 }

@@ -1,53 +1,37 @@
 (function(){
 
     function loadGame() {
-        initScreen();
+        initRenderer(document.getElementById('buffer'),
+            document.getElementById('canvas'));
+        initScreen(document.getElementById('canvas'), WIDTH * 2, HEIGHT * 2);
+        initScreen(document.getElementById('buffer'), WIDTH, HEIGHT);
         res.onReady(loaded);
         res.load(['player', 'tiles', 'bear', 'background', 'particles']);
     }
 
-    function initScreen() {
-        var canvas = document.getElementById('canvas');
+    function initScreen(canvas, width, height) {
         var context = canvas.getContext('2d');
-        canvas.width = WIDTH * PIXEL_RATIO();
-        canvas.height = HEIGHT * PIXEL_RATIO();
-        canvas.style.width = WIDTH + 'px';
-        canvas.style.height = HEIGHT + 'px';
+        canvas.width = width * PIXEL_RATIO();
+        canvas.height = height * PIXEL_RATIO();
+        canvas.style.width = width + 'px';
+        canvas.style.height = height + 'px';
         context.setTransform(PIXEL_RATIO(), 0, 0, PIXEL_RATIO(), 0, 0);
+        context.imageSmoothingEnabled = false;
+        context.webkitImageSmoothingEnabled = false;
+        context.mozImageSmoothingEnabled = false;
     }
 
     function loaded() {
-        var context = document.getElementById('canvas').getContext('2d');
-        context.fillStyle = "black";
-        context.fillRect(0, 0, WIDTH, HEIGHT);
-        context.font = "53px Aoyagi bold";
-        context.textAlign = "center";
-        context.fillStyle = "#00005A";
-        context.fillText("じかん", WIDTH / 2, HEIGHT / 2);
-        context.font = "50px Aoyagi bold";
-        context.textAlign = "center";
-        context.fillStyle = "#DDB500";
-        context.fillText("じかん", WIDTH / 2, HEIGHT / 2);
+        drawLoaded();
         setTimeout(proceed, 1000);
     }
 
     function proceed() {
-        var canvas = document.getElementById('canvas');
-        var context = canvas.getContext('2d');
-        context.fillStyle = "black";
-        context.fillRect(0, 0, WIDTH, HEIGHT);
-        //hide canvas
         init();
     }
 
     function updateLoading(value) {
-        var context = document.getElementById('canvas').getContext('2d');
-        context.font = "25px Aoyagi bold";
-        context.textAlign = "center";
-        context.fillStyle = "black";
-        context.fillRect(0, 0, WIDTH, HEIGHT);
-        context.fillStyle = "#666";
-        context.fillText("Loading: " + value + "%", WIDTH / 2, HEIGHT / 2);
+        drawLoading(value);
     }
 
     window.loadGame = loadGame;
