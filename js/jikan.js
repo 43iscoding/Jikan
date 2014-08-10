@@ -25,6 +25,9 @@ window.getSeason = function() {
 window.getObjects = function() {
     return objects;
 };
+window.currentTime = function() {
+    return new Date().getTime();
+};
 
 function startLevel() {
     levelComplete = false;
@@ -34,6 +37,8 @@ function startLevel() {
 }
 
 function tick() {
+    if (DEBUG) debug.calculateUPS();
+    var from = currentTime();
     if (player.dead) {
         setTimeout(init, 500);
         return;
@@ -42,7 +47,7 @@ function tick() {
     update();
     render(objects, particles);
     if (levelComplete) win();
-    setTimeout(tick, 1000 / fps);
+    setTimeout(tick, 1000 / fps - (currentTime() - from));
 }
 
 function processInput() {

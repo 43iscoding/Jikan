@@ -71,5 +71,10 @@ function renderDebug() {
     context.fillStyle = "#DDB500";
     context.fillText('Particles:', WIDTH / 10, HEIGHT / 8);
     context.fillText(String(particles.length), WIDTH / 4, HEIGHT / 8);
+
+    context.fillStyle = "#00005A";
+    context.fillText('FPS: ' + debug.getUPS(), WIDTH / 13 + 1, HEIGHT - 5 - 1);
+    context.fillStyle = "#DDB500";
+    context.fillText('FPS: ' + debug.getUPS(), WIDTH / 13, HEIGHT - 5);
 }
 }());
