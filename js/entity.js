@@ -447,7 +447,7 @@ function ParticleSnow(x, y) {
 }
 ParticleSnow.prototype = Object.create(Particle.prototype);
 ParticleSnow.prototype.destroyOnCollision = function(entity) {
-    return entity.type == TYPE.PLAYER || entity.type == TYPE.BEAR;
+    return entity.type == TYPE.PLAYER || entity.type == TYPE.BEAR || entity.type == TYPE.WATER;
 };
 ParticleSnow.prototype.stopOnCollision = function(entity) {
     return entity.type == TYPE.GROUND || entity.type == TYPE.ICE;
