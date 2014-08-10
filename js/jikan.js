@@ -73,7 +73,12 @@ function processInput() {
     }
     //special
     if (input.isPressed(input.keys.R.key)) {
+        input.clearInput();
         startLevel();
+    }
+    if (input.isPressed(input.keys.F.key)) {
+        input.clearInput();
+        loader.toggleFullscreen();
     }
 }
 

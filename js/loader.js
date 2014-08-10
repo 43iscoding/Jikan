@@ -1,5 +1,7 @@
 (function(){
 
+    var fullScreen = false;
+
     function loadGame() {
         initRenderer(document.getElementById('buffer'),
             document.getElementById('canvas'));
@@ -36,6 +38,14 @@
 
     window.loadGame = loadGame;
     window.loader = {
-        update : updateLoading
+        update : updateLoading,
+        toggleFullscreen : function() {
+            if (fullScreen) {
+                initScreen(document.getElementById('canvas'), WIDTH * 2, HEIGHT * 2);
+            } else {
+                initScreen(document.getElementById('canvas'), window.innerWidth, window.innerHeight);
+            }
+            fullScreen = !fullScreen;
+        }
     }
 }());

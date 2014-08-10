@@ -3,7 +3,6 @@ Snow:
 
 Engine:
 .Water interaction
-.Resize game screen to level size
 
 Content:
 .Carnivorous plants
@@ -18,12 +17,6 @@ Art:
 .Sunflower
 .Season panel (Howl doorbell?)
 .Butterflies flying @ summer
-
-Refactor:
-.Move physics & season behaviour to separate file
-
-Misc:
-.Full screen
 
 Ideas:
 .Seasons as limited area aura (Braid ring)
