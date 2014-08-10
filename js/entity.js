@@ -47,7 +47,7 @@ function Entity(x, y, width, height, type, sprite, args) {
         this.x = x;
         this.y = y;
     } else {
-        this.x = x + TILE_SIZE / 2 - width / 2;
+        this.x = x + Math.round(TILE_SIZE / 2) - Math.round(width / 2);
         this.y = y + TILE_SIZE - height;
     }
     this.width = width;
