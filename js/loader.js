@@ -21,6 +21,7 @@
         context.imageSmoothingEnabled = false;
         context.webkitImageSmoothingEnabled = false;
         context.mozImageSmoothingEnabled = false;
+        canvas.style.marginTop = Math.round((window.innerHeight - height) / 4) + 'px';
     }
 
     function loaded() {
@@ -40,10 +41,11 @@
     window.loader = {
         update : updateLoading,
         toggleFullscreen : function() {
+            var canvas = document.getElementById('canvas');
             if (fullScreen) {
-                initScreen(document.getElementById('canvas'), WIDTH * 2, HEIGHT * 2);
+                initScreen(canvas, WIDTH * 2, HEIGHT * 2);
             } else {
-                initScreen(document.getElementById('canvas'), window.innerWidth, window.innerHeight);
+                initScreen(canvas, window.innerWidth, window.innerHeight);
             }
             fullScreen = !fullScreen;
         }

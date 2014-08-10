@@ -73,11 +73,11 @@ function processInput() {
     }
     //special
     if (input.isPressed(input.keys.R.key)) {
-        input.clearInput();
+        input.clearInput(input.keys.R.key);
         startLevel();
     }
     if (input.isPressed(input.keys.F.key)) {
-        input.clearInput();
+        input.clearInput(input.keys.F.key);
         loader.toggleFullscreen();
     }
 }

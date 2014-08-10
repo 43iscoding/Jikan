@@ -44,8 +44,12 @@
         return pressed[key];
     }
 
-    function clearInput() {
-        pressed = {};
+    function clearInput(key) {
+        if (key) {
+            pressed[key] = false;
+        } else {
+            pressed = {};
+        }
         lastPressed = null;
     }
 
