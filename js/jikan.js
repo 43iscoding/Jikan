@@ -129,10 +129,13 @@ function updateParticle(particle) {
 
     if (collision.offScreen(particle)) return true;
 
-    if (particle.destroyOnCollision()) {
-        for (var i = 0; i < objects.length; i++) {
-            if (!objects[i].isPlatform()) continue;
-            if (collision.collision(particle, objects[i])) return true;
+    for (var i = 0; i < objects.length; i++) {
+        if (!collision.collision(particle, objects[i])) continue;
+        if (particle.destroyOnCollision(objects[i])) return true;
+        if (particle.stopOnCollision(objects[i])) {
+            particle.ySpeed = 0;
+            particle.xSpeed = 0;
+            particle.static = true;
         }
     }
 

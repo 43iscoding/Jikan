@@ -395,7 +395,6 @@ Bear.prototype.wakeUp = function() {
 function Particle(x, y, width, height, type, validSeasons, sprite, args) {
     if (args == undefined) args = {};
     sprite.once = args == undefined ? true : (args['once'] == undefined ? true : args['once']);
-    args.static = true;
     args.overrideCoords = true;
     this.validSeasons = validSeasons;
     Entity.call(this, x, y, width, height, type, sprite, args);
@@ -404,7 +403,10 @@ Particle.prototype = Object.create(Entity.prototype);
 Particle.prototype.getState = function() {
     return STATE.IDLE;
 };
-Particle.prototype.destroyOnCollision = function() {
+Particle.prototype.destroyOnCollision = function(entity) {
+    return false;
+};
+Particle.prototype.stopOnCollision = function(entity) {
     return false;
 };
 Particle.prototype.act = function() {
@@ -444,20 +446,24 @@ function ParticleSnow(x, y) {
         {name : 'particles', pos : [0, TILE_SIZE], frames: frames, speed : 1}, args);
 }
 ParticleSnow.prototype = Object.create(Particle.prototype);
-ParticleSnow.prototype.destroyOnCollision = function() {
-    return true;
+ParticleSnow.prototype.destroyOnCollision = function(entity) {
+    return entity.type == TYPE.PLAYER || entity.type == TYPE.BEAR;
+};
+ParticleSnow.prototype.stopOnCollision = function(entity) {
+    return entity.type == TYPE.GROUND || entity.type == TYPE.ICE;
 };
 ParticleSnow.prototype.act = function() {
     switch (getSeason()) {
         case SEASON.WINTER : {
+            if (this.static) return Math.random() < 0.005;
             if (Math.random() < this.chanceToMove) {
                 this.x += Math.random() < .5 ? 1 : -1;
             }
             return false;
         }
-        case SEASON.AUTUMN : return Math.random() < 0.0125;
-        case SEASON.SPRING : return Math.random() < 0.025;
-        case SEASON.SUMMER : return Math.random() < 0.05;
+        case SEASON.AUTUMN : return this.static ? Math.random() < 0.05 : Math.random() < 0.0125;
+        case SEASON.SPRING : return this.static ? Math.random() < 0.1 : Math.random() < 0.025;
+        case SEASON.SUMMER : return this.static ? Math.random() < 0.2 : Math.random() < 0.05;
     }
 };
 
