@@ -7,6 +7,7 @@ var season;
 
 var levelComplete = false;
 var winTimer = null;
+var counter = 0;
 
 function init() {
     startLevel();
@@ -38,6 +39,7 @@ function startLevel() {
 function tick() {
     if (DEBUG) debug.calculateUPS();
     var from = currentTime();
+    counter++;
     if (player.dead) {
         setTimeout(init, 500);
         return;
@@ -87,6 +89,10 @@ function changeSeason(newSeason) {
     season = newSeason;
 }
 
+var WIND_MOVE = 1;
+var WIND_TICK = 1;
+var WIND_ANIMATION = 100;
+
 function update() {
     for (var i = objects.length - 1; i >= 0; i--) {
         updateEntity(objects[i]);
@@ -103,6 +109,21 @@ function update() {
     if (season == SEASON.WINTER) {
         //spawn snow
         particles.push(spawn(TYPE.PARTICLE.SNOW, Math.random() * WIDTH, 0));
+    } else if (season == SEASON.AUTUMN) {
+        if (counter % WIND_TICK == 0) {
+            objects.forEach(function(object) {
+                if (object.static) return;
+                object.x += WIND_MOVE;
+            });
+            particles.forEach(function(particle) {
+                if (particle.static) return;
+                particle.x += WIND_MOVE;
+            });
+        }
+        if (counter % WIND_ANIMATION == 0) {
+            //particles.push(spawn(TYPE.PARTICLE.WIND, WIDTH / 2, HEIGHT / 2));
+        }
+
     }
 }
 

@@ -34,7 +34,8 @@ window.TYPE = {
     BEAR : 'BEAR',
     PARTICLE : {
         SLEEP : 'SLEEP',
-        SNOW : 'SNOW'
+        SNOW : 'SNOW',
+        WIND : 'WIND'
     }
 };
 
@@ -468,6 +469,20 @@ ParticleSnow.prototype.act = function() {
 };
 
 /****************************************************
+                     Wind particle
+ ****************************************************/
+
+function ParticleWind(x, y) {
+    var frames = [];
+    frames[STATE.IDLE] = [0];
+    var seasons = [SEASON.AUTUMN];
+    var args = {static : true};
+    Particle.call(this, x, y, 75, 31, TYPE.PARTICLE.WIND, seasons,
+        {name : 'particles', pos: [0, TILE_SIZE * 2], frames: frames, speed : 1}, args);
+}
+ParticleWind.prototype = Object.create(Particle.prototype);
+
+/****************************************************
                       Spawn function
  ****************************************************/
 
@@ -480,6 +495,7 @@ window.spawn = function(type, x, y, style) {
         case TYPE.BEAR : return new Bear(x, y);
         case TYPE.PARTICLE.SLEEP : return new ParticleSleep(x, y);
         case TYPE.PARTICLE.SNOW: return new ParticleSnow(x, y);
+        case TYPE.PARTICLE.WIND: return new ParticleWind(x, y);
         case TYPE.FINISH : return new Finish(x, y);
         default: {
             console.log("Cannot spawn: unknown type - " + type);
