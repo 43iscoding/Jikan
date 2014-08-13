@@ -112,11 +112,9 @@ function update() {
     } else if (season == SEASON.AUTUMN) {
         if (counter % WIND_TICK == 0) {
             objects.forEach(function(object) {
-                if (object.static) return;
                 object.move(WIND_MOVE, 0);
             });
             particles.forEach(function(particle) {
-                if (particle.static) return;
                 particle.move(WIND_MOVE, 0);
             });
         }
@@ -145,17 +143,16 @@ function updateParticle(particle) {
         return true;
     }
 
-    if (particle.xSpeed > 0) particle.x += particle.xSpeed;
-    if (particle.ySpeed > 0) particle.y += particle.ySpeed;
+    var collisions = particle.move(particle.xSpeed, particle.ySpeed);
 
     if (engine.offScreen(particle)) return true;
 
+    var objects = collisions.list();
     for (var i = 0; i < objects.length; i++) {
-        if (!engine.collision(particle, objects[i])) continue;
         if (particle.destroyOnCollision(objects[i])) return true;
         if (particle.stopOnCollision(objects[i])) {
-            particle.ySpeed = 0;
             particle.xSpeed = 0;
+            particle.ySpeed = 0;
             particle.static = true;
         }
     }

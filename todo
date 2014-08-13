@@ -13,9 +13,9 @@ Winter:
 .Hibernate/Freeze gradually
 
 Engine 2.0:
-.Special collision effect
-.Multiple objects for 1-side collision.
-.updateParticle
+.Multiple objects for 1-side collision + priority
+.Stuck on angles when moved by wind
+.Sunflower bugs
 
 Content:
 .Carnivorous plants

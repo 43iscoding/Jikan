@@ -80,6 +80,7 @@ Entity.prototype = {
         return false;
     },
     move : function(dx, dy) {
+        if (this.static) return engine.move(this, 0, 0);
         return engine.move(this, dx, dy);
     },
     get type() {

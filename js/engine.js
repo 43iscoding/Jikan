@@ -10,6 +10,9 @@ window.engine = {
     tileUnder : tileUnder,
     move : function(entity, dx, dy) {
         var collisions = new Collision(entity);
+        collisions = getCollisions(collisions, entity);
+        if (collisions.hard()) return collisions;
+
         for (var x = 0; x < Math.abs(dx); x++) {
             entity.x = entity.x + (dx > 0 ? 1 : -1);
             collisions = getCollisions(collisions, entity);
@@ -57,7 +60,17 @@ function Collision(entity) {
     this[DIR.OFF_SCREEN] = false;
     this[DIR.LEAVING_SCREEN] = false;
 }
+window.Collision = Collision;
 Collision.prototype = {
+    list : function() {
+        var objects = [];
+        if (this.right() != DUMMY_CELL) objects.push(this.right());
+        if (this.left() != DUMMY_CELL) objects.push(this.left());
+        if (this.top() != DUMMY_CELL) objects.push(this.top());
+        if (this.bottom() != DUMMY_CELL) objects.push(this.bottom());
+        if (this.inside() != DUMMY_CELL) objects.push(this.inside());
+        return objects;
+    },
     top : function() {
         return this[DIR.TOP];
     },
@@ -74,7 +87,9 @@ Collision.prototype = {
         return this[DIR.INSIDE];
     },
     empty : function() {
-        return (this.top() == this.bottom() == this.left() == this.right() == DUMMY_CELL) && !this.offscreen();
+        return this.left() == DUMMY_CELL && this.right() == DUMMY_CELL &&
+               this.top() == DUMMY_CELL && this.bottom() == DUMMY_CELL &&
+               this.inside() == DUMMY_CELL && !this.offScreen() && !this.leavingScreen();
     },
     offScreen : function() {
         return this[DIR.OFF_SCREEN];
@@ -90,16 +105,25 @@ Collision.prototype = {
         collisionEffect(this.entity, this.inside());
     },
     hard : function(x, positive) {
-        if (x && this.leavingScreen() && !this.entity.canLeaveScreen()) return true;
+        if ((x || x == undefined) && this.leavingScreen() && !this.entity.canLeaveScreen()) return true;
+
+        if (x == undefined && positive == undefined) {
+            return this.right().isPlatform() || this.left().isPlatform() ||
+                   this.top().isPlatform() || this.bottom().isPlatform() ||
+                   this.inside().isPlatform();
+        }
 
         if (x && positive) {
-            return this.right().isPlatform();
-        } else if (x) {
-            return this.left().isPlatform();
-        } else if (positive) {
-            return this.bottom().isPlatform();
+            return this.right().isPlatform() || this.inside().isPlatform();
+        } else if (x && !positive) {
+            return this.left().isPlatform() || this.inside().isPlatform();
+        } else if (!x && positive) {
+            return this.bottom().isPlatform() || this.inside().isPlatform();
+        } else if (!x && !positive) {
+            return this.top().isPlatform() || this.inside().isPlatform();
         } else {
-            return this.top().isPlatform();
+            console.log('dafuq!');
+            return false;
         }
     },
     hasType : function(type) {
@@ -110,13 +134,14 @@ Collision.prototype = {
                (this.inside().type == type);
     },
     toString : function() {
-        return '{' +
+        return this.entity.type + '-collision{' +
             (this.left() == DUMMY_CELL ? '' : ' left: ' + this.left().type) +
             (this.right() == DUMMY_CELL ? '' : ' right: ' + this.right().type) +
             (this.top() == DUMMY_CELL ? '' : ' top: ' + this.top().type) +
             (this.bottom() == DUMMY_CELL ? '' : ' bottom: ' + this.bottom().type) +
+            (this.inside() == DUMMY_CELL ? '' : ' inside: ' + this.inside().type) +
             (this.offScreen() ? ' offScreen' : '') +
-            (this.leavingScreen() ? ' leavingScreen' : '') + ' }';
+            (this.leavingScreen() ? ' leavingScreen' : '') + '}';
     }
 };
 
