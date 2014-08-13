@@ -12,8 +12,10 @@ Autumn:
 Winter:
 .Hibernate/Freeze gradually
 
-Engine:
-.Water interaction
+Engine 2.0:
+.Special collision effect
+.Multiple objects for 1-side collision.
+.updateParticle
 
 Content:
 .Carnivorous plants
@@ -21,6 +23,7 @@ Content:
 .Season change ticks
 .Sunflower should grow non-instantly
 .Bear should enrage when Winter -> Summer
+.Water interaction/Drowning
 
 Art:
 .Player

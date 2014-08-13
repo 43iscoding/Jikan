@@ -54,14 +54,14 @@ function tick() {
 function processInput() {
     if (levelComplete) return;
     //movement
-    var movementRatio = collision.tileUnder(player).type == TYPE.ICE ? ICE_SLIDING : 1;
+    var movementRatio = engine.tileUnder(player).type == TYPE.ICE ? ICE_SLIDING : 1;
     if (input.isPressed(input.keys.RIGHT.key)) {
         player.moveRight(movementRatio);
     } else if (input.isPressed(input.keys.LEFT.key)) {
         player.moveLeft(movementRatio);
     }
     if (input.isPressed(input.keys.UP.key) || input.isPressed(input.keys.SPACE.key)) {
-        if (collision.grounded(player)) player.jump();
+        if (player.grounded) player.jump();
     }
     //seasons
     if (input.isPressed(input.keys['1'].key)) {
@@ -148,10 +148,10 @@ function updateParticle(particle) {
     if (particle.xSpeed > 0) particle.x += particle.xSpeed;
     if (particle.ySpeed > 0) particle.y += particle.ySpeed;
 
-    if (collision.offScreen(particle)) return true;
+    if (engine.offScreen(particle)) return true;
 
     for (var i = 0; i < objects.length; i++) {
-        if (!collision.collision(particle, objects[i])) continue;
+        if (!engine.collision(particle, objects[i])) continue;
         if (particle.destroyOnCollision(objects[i])) return true;
         if (particle.stopOnCollision(objects[i])) {
             particle.ySpeed = 0;
@@ -172,30 +172,38 @@ function updateEntity(entity) {
     entity.act();
     //process physics
 
-    entity.y = Math.round(entity.y + entity.ySpeed);
-    var ground = collision.processGroundCollision(entity);
+    var collisions = entity.move(entity.xSpeed, entity.ySpeed);
+    if (!collisions.empty) {
+        //console.log(collisions);
+    }
 
-    entity.x = Math.round(entity.x + entity.xSpeed);
-    var wall = collision.processWallCollision(entity);
 
-    if (wall.isPlatform()) {
+
+/*    engine.applyCollision(entity, ground, wall); - special effect
+
+    dont allow leaving screen
+
+    */
+
+    if (collisions.top().isPlatform()) {
+        entity.ySpeed = 0;
+    }
+    if ((collisions.right().isPlatform() && entity.xSpeed > 0) || (collisions.left().isPlatform() && entity.xSpeed < 0)) {
         entity.xSpeed = 0;
     }
 
-    if (wall.type == TYPE.FINISH && entity.type == TYPE.PLAYER && !levelComplete) {
+    if (entity.type == TYPE.PLAYER && collisions.hasType(TYPE.FINISH)) {
         levelComplete = true;
     }
 
-    collision.applyCollision(entity, ground, wall);
+    entity.grounded = collisions.bottom().isPlatform();
 
-    if (ground.type != TYPE.ICE) {
+    if (collisions.bottom().type != TYPE.ICE) {
         entity.applyFriction(FRICTION);
     }
 
-    if (ground.isBouncy()) {
+    if (collisions.bottom().isBouncy()) {
         entity.ySpeed = -entity.ySpeed;
-    } else if (collision.grounded(entity)) {
-        entity.ySpeed = 0;
     } else {
         entity.applyGravity(GRAVITY);
     }

@@ -76,6 +76,12 @@ function Entity(x, y, width, height, type, sprite, args) {
 }
 
 Entity.prototype = {
+    canLeaveScreen : function() {
+        return false;
+    },
+    move : function(dx, dy) {
+        return engine.move(this, dx, dy);
+    },
     get type() {
         return this._type;
     },
@@ -424,6 +430,9 @@ function Particle(x, y, width, height, type, validSeasons, sprite, args) {
 Particle.prototype = Object.create(Entity.prototype);
 Particle.prototype.getState = function() {
     return STATE.IDLE;
+};
+Particle.prototype.canLeaveScreen = function() {
+    return true;
 };
 Particle.prototype.destroyOnCollision = function(entity) {
     return false;
