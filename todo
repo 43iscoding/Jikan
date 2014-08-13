@@ -16,6 +16,7 @@ Engine 2.0:
 .Multiple objects for 1-side collision + priority
 .Stuck on angles when moved by wind
 .Sunflower bugs
+.Stand on ice -> Summer -> Die, but water rendered as ice
 
 Content:
 .Carnivorous plants
