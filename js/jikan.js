@@ -113,11 +113,11 @@ function update() {
         if (counter % WIND_TICK == 0) {
             objects.forEach(function(object) {
                 if (object.static) return;
-                object.x += WIND_MOVE;
+                object.move(WIND_MOVE, 0);
             });
             particles.forEach(function(particle) {
                 if (particle.static) return;
-                particle.x += WIND_MOVE;
+                particle.move(WIND_MOVE, 0);
             });
         }
         if (counter % WIND_ANIMATION == 0) {
@@ -173,21 +173,9 @@ function updateEntity(entity) {
     //process physics
 
     var collisions = entity.move(entity.xSpeed, entity.ySpeed);
-    if (!collisions.empty) {
-        //console.log(collisions);
-    }
 
+    collisions.applyEffects();
 
-
-/*    engine.applyCollision(entity, ground, wall); - special effect
-
-    dont allow leaving screen
-
-    */
-
-    if (collisions.top().isPlatform()) {
-        entity.ySpeed = 0;
-    }
     if ((collisions.right().isPlatform() && entity.xSpeed > 0) || (collisions.left().isPlatform() && entity.xSpeed < 0)) {
         entity.xSpeed = 0;
     }
@@ -196,7 +184,7 @@ function updateEntity(entity) {
         levelComplete = true;
     }
 
-    entity.grounded = collisions.bottom().isPlatform();
+    if (!entity.grounded) entity.grounded = collisions.bottom().isPlatform();
 
     if (collisions.bottom().type != TYPE.ICE) {
         entity.applyFriction(FRICTION);
@@ -204,9 +192,10 @@ function updateEntity(entity) {
 
     if (collisions.bottom().isBouncy()) {
         entity.ySpeed = -entity.ySpeed;
-    } else {
-        entity.applyGravity(GRAVITY);
+    } else if (entity.grounded || collisions.top().isPlatform()) {
+        entity.ySpeed = 0;
     }
+    entity.applyGravity(GRAVITY);
 }
 
 function addParticle(type, x, y) {

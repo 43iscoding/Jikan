@@ -109,19 +109,19 @@ Entity.prototype = {
         if (this.xSpeed > 0) {
             if (this.ySpeed < 0) {
                 return STATE.JUMP_RIGHT;
-            } else if (this.ySpeed > 0) {
+            } else if (this.ySpeed > 0 && !this.grounded) {
                 return STATE.FALL_RIGHT;
             } else return STATE.WALK_RIGHT;
         } else if (this.xSpeed < 0) {
             if (this.ySpeed < 0) {
                 return STATE.JUMP_LEFT;
-            } else if (this.ySpeed > 0) {
+            } else if (this.ySpeed > 0 && !this.grounded) {
                 return STATE.FALL_LEFT;
             } else return STATE.WALK_LEFT;
         } else {
             if (this.ySpeed < 0) {
                 return STATE.JUMP;
-            } else if (this.ySpeed > 0) {
+            } else if (this.ySpeed > 0 && !this.grounded) {
                 return STATE.FALL;
             } else return STATE.IDLE;
         }
@@ -339,19 +339,19 @@ Bear.prototype.getState = function() {
     if (this.xSpeed > 0) {
         if (this.ySpeed < 0) {
             return STATE.JUMP_RIGHT;
-        } else if (this.ySpeed > 0) {
+        } else if (this.ySpeed > 0 && !this.grounded) {
             return STATE.FALL_RIGHT;
         } else return STATE.WALK_RIGHT;
     } else if (this.xSpeed < 0) {
         if (this.ySpeed < 0) {
             return STATE.JUMP_LEFT;
-        } else if (this.ySpeed > 0) {
+        } else if (this.ySpeed > 0 && !this.grounded) {
             return STATE.FALL_LEFT;
         } else return STATE.WALK_LEFT;
     } else {
         if (this.ySpeed < 0) {
             return STATE.JUMP;
-        } else if (this.ySpeed > 0) {
+        } else if (this.ySpeed > 0 && !this.grounded) {
             return STATE.FALL;
         } else return STATE.IDLE;
     }

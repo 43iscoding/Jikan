@@ -1,11 +1,5 @@
 (function() {
 window.engine = {
-    applyCollision : function(entity, ground, wall) {
-        collisionEffect(entity, ground);
-        collisionEffect(entity, wall);
-        collisionEffect(ground, entity);
-        collisionEffect(wall, entity);
-    },
     offScreen : function(entity) {
         return entity.x + entity.width < 0 || entity.y + entity.height < 0 || entity.x > WIDTH || entity.y > HEIGHT;
     },
@@ -34,6 +28,9 @@ window.engine = {
                     entity.y = entity.y + (dy > 0 ? - 1 : 1);
                     break;
                 }
+            }
+            if (dy < 0 && y > 0) {
+                entity.grounded = false;
             }
         }
         return collisions;
@@ -85,8 +82,15 @@ Collision.prototype = {
     leavingScreen : function() {
         return this[DIR.LEAVING_SCREEN];
     },
+    applyEffects : function() {
+        collisionEffect(this.entity, this.left());
+        collisionEffect(this.entity, this.right());
+        collisionEffect(this.entity, this.top());
+        collisionEffect(this.entity, this.bottom());
+        collisionEffect(this.entity, this.inside());
+    },
     hard : function(x, positive) {
-        if (this.leavingScreen() && !this.entity.canLeaveScreen()) return true;
+        if (x && this.leavingScreen() && !this.entity.canLeaveScreen()) return true;
 
         if (x && positive) {
             return this.right().isPlatform();
@@ -146,8 +150,13 @@ function tileUnder(entity) {
     return DUMMY_CELL;
 }
 
-function collisionEffect(entity, withEntity) {
-    if (entity.static) return;
+function collisionEffect(entity1, entity2) {
+    effect(entity1, entity2);
+    effect(entity2, entity1);
+}
+
+function effect(entity, withEntity) {
+    if (entity.static || entity == DUMMY_CELL) return;
     if (withEntity.isFatal()) {
         entity.die();
         entity.static = true;
