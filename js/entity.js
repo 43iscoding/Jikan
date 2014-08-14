@@ -25,14 +25,14 @@ window.STATE = {
 window.TYPE = {
     //[name, collision-priority]
     DUMMY : ['DUMMY', -1],
-    PLAYER : ['PLAYER', 0],
+    PLAYER : ['PLAYER', 1],
     WATER : ['WATER', 0],
     ICE : ['ICE', 0],
-    GROUND : ['GROUND', 1],
+    GROUND : ['GROUND', 2],
     SPIKE : ['SPIKE', 0],
     SUNFLOWER : ['SUNFLOWER', 0],
-    FINISH : ['FINISH', 2],
-    BEAR : ['BEAR', 0],
+    FINISH : ['FINISH', 0],
+    BEAR : ['BEAR', 1],
     PARTICLE : {
         SLEEP : ['SLEEP', -1],
         SNOW : ['SNOW', -1],
