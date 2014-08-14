@@ -114,10 +114,10 @@ function update() {
     } else if (season == SEASON.AUTUMN) {
         if (counter % WIND_TICK == 0) {
             objects.forEach(function(object) {
-                object.move(WIND_MOVE, 0);
+                if (!object.static) object.move(WIND_MOVE, 0);
             });
             particles.forEach(function(particle) {
-                particle.move(WIND_MOVE, 0);
+                if (!particle.static) particle.move(WIND_MOVE, 0);
             });
         }
         if (counter % WIND_ANIMATION == 0) {

@@ -10,13 +10,13 @@ window.engine = {
     move : function(entity, dx, dy) {
         var collisions = new Collision(entity);
         collisions = getCollisions(collisions, entity, DIR.INSIDE);
-        if (collisions.hard()) return collisions;
+        if (collisions.hard() && !entity.forceMovement()) return collisions;
 
         for (var x = 0; x < Math.abs(dx); x++) {
             entity.x = entity.x + (dx > 0 ? 1 : -1);
             collisions = getCollisions(collisions, entity, dx > 0 ? DIR.RIGHT : DIR.LEFT);
             if (!collisions.empty()) {
-                if (collisions.hard(true, dx > 0)) {
+                if (collisions.hard(true, dx > 0) && !entity.forceMovement()) {
                     entity.x = entity.x + (dx > 0 ? - 1 : 1);
                     break;
                 }
@@ -26,7 +26,7 @@ window.engine = {
             entity.y = entity.y + (dy > 0 ? 1 : -1);
             collisions = getCollisions(collisions, entity, dy > 0 ? DIR.BOTTOM : DIR.TOP);
             if (!collisions.empty()) {
-                if (collisions.hard(false, dy > 0)) {
+                if (collisions.hard(false, dy > 0) && !entity.forceMovement()) {
                     entity.y = entity.y + (dy > 0 ? - 1 : 1);
                     break;
                 }

@@ -30,7 +30,7 @@ window.TYPE = {
     ICE : ['ICE', 0],
     GROUND : ['GROUND', 2],
     SPIKE : ['SPIKE', 0],
-    SUNFLOWER : ['SUNFLOWER', 0],
+    SUNFLOWER : ['SUNFLOWER', 1],
     FINISH : ['FINISH', 0],
     BEAR : ['BEAR', 1],
     PARTICLE : {
@@ -80,7 +80,6 @@ Entity.prototype = {
         return false;
     },
     move : function(dx, dy) {
-        if (this.static) return engine.move(this, 0, 0);
         return engine.move(this, dx, dy);
     },
     get type() {
@@ -152,14 +151,17 @@ Entity.prototype = {
     applyGravity : function(gravity) {
         this.ySpeed = Math.min(this.ySpeed + gravity, FREE_FALL);
     },
+    forceMovement : function() {
+        return false;
+    },
     processSeason : function(season) {
-        if (this.processedSeason == season) return;
+        var already = this.processedSeason == season;
         var result = false;
         switch (season) {
-            case SEASON.SPRING: result = this.processSpring(); break;
-            case SEASON.SUMMER: result = this.processSummer(); break;
-            case SEASON.AUTUMN: result = this.processAutumn(); break;
-            case SEASON.WINTER: result = this.processWinter(); break;
+            case SEASON.SPRING: result = this.processSpring(already); break;
+            case SEASON.SUMMER: result = this.processSummer(already); break;
+            case SEASON.AUTUMN: result = this.processAutumn(already); break;
+            case SEASON.WINTER: result = this.processWinter(already); break;
             default : console.log("Unknown season: " + season);
         }
         if (result) this.processedSeason = season;
@@ -280,6 +282,8 @@ function Sunflower(x,y) {
     var frames = [];
     frames[STATE.IDLE] = [0];
     frames[STATE.WITHERED] = [1];
+    this.growCounter = 0;
+    this.growTick = 2;
     Block.call(this, x, y, TYPE.SUNFLOWER, {name : 'tiles', pos: [0, TILE_SIZE * 2], frames: frames, speed : 2});
 }
 Sunflower.prototype = Object.create(Block.prototype);
@@ -289,14 +293,37 @@ Sunflower.prototype.isPlatform = function() {
 Sunflower.prototype.getState = function() {
     return this.wither ? STATE.WITHERED : STATE.IDLE;
 };
-Sunflower.prototype.processSpring = function() {
-    this.wither = false; return true;
+Sunflower.prototype.forceMovement = function() {
+    return true;
 };
-Sunflower.prototype.processSummer = function() {
-    this.wither = false; return true;
+Sunflower.prototype.processSpring = function(already) {
+    if (this.processedSeason != SEASON.WINTER) return true;
+
+    if (this.height == TILE_SIZE && this.growCounter > 0) {
+        this.growCounter = 0;
+        return true;
+    } else if (this.growCounter == 0) {
+        this.y += this.height;
+        this.height = 0;
+        this.wither = false;
+    }
+
+    this.growCounter++;
+
+    if (this.growCounter % this.growTick == 0) {
+        this.height++;
+        this.move(0, -1);
+    }
+
+    return false;
 };
-Sunflower.prototype.processWinter = function() {
-    this.wither = true; return true;
+Sunflower.prototype.processSummer = function(already) {
+    return true;//this.wither = false; return true;
+};
+Sunflower.prototype.processWinter = function(already) {
+    this.wither = true;
+    this.growCounter = 0;
+    return true;
 };
 
 function Finish(x,y) {
@@ -393,7 +420,9 @@ Bear.prototype.processSpring = function() {
 Bear.prototype.processSummer = function() {
     return this.wakeUp();
 };
-Bear.prototype.processWinter = function() {
+Bear.prototype.processWinter = function(already) {
+    if (already) return false;
+
     return this.fallAsleep();
 };
 Bear.prototype.fallAsleep = function() {
@@ -480,7 +509,8 @@ function ParticleSnow(x, y) {
 ParticleSnow.prototype = Object.create(Particle.prototype);
 ParticleSnow.prototype.destroyOnCollision = function(entity) {
     return entity.type == TYPE.PLAYER || entity.type == TYPE.BEAR ||
-           entity.type == TYPE.WATER || entity.type == TYPE.SPIKE;
+           entity.type == TYPE.WATER || entity.type == TYPE.SPIKE ||
+           (entity.type == TYPE.SUNFLOWER && !entity.wither);
 };
 ParticleSnow.prototype.stopOnCollision = function(entity) {
     return entity.type == TYPE.GROUND || entity.type == TYPE.ICE;
