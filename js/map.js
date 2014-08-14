@@ -71,6 +71,16 @@
         "---####---" +
         "---####---";
 
+    var LEVEL_6 = "10W8H" +
+        ".......F.." +
+        "..-....-.." +
+        "..-....-.." +
+        "..-....-.T" +
+        "..-..-.-.-" +
+        "..-..-.-.-" +
+        "P.T.T-TTT-" +
+        "----------";
+
     var END = "10W8H" +
         ".........." +
         "---.-.-..-" +
@@ -83,7 +93,7 @@
 
     var currentLevel = 0;
 
-    window.MAPS = [LEVEL_0, LEVEL_1, LEVEL_2, LEVEL_3, LEVEL_4, LEVEL_5, END];
+    window.MAPS = [LEVEL_0, LEVEL_1, LEVEL_2, LEVEL_3, LEVEL_4, LEVEL_5, LEVEL_6, END];
 
     window.getCurrentLevel = function() {
         return currentLevel;

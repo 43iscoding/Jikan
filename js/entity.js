@@ -279,6 +279,7 @@ Water.prototype.processWinter = function() {
  ****************************************************/
 
 function Sunflower(x,y) {
+    this.baseY = y;
     var frames = [];
     frames[STATE.IDLE] = [0];
     frames[STATE.WITHERED] = [1];
@@ -303,7 +304,7 @@ Sunflower.prototype.processSpring = function(already) {
         this.growCounter = 0;
         return true;
     } else if (this.growCounter == 0) {
-        this.y += this.height;
+        this.y = this.baseY + TILE_SIZE;
         this.height = 0;
         this.wither = false;
     }
@@ -321,6 +322,8 @@ Sunflower.prototype.processSummer = function(already) {
     return true;//this.wither = false; return true;
 };
 Sunflower.prototype.processWinter = function(already) {
+    this.y = this.baseY;
+    this.height = TILE_SIZE;
     this.wither = true;
     this.growCounter = 0;
     return true;

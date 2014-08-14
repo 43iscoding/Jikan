@@ -163,8 +163,8 @@ function updateParticle(particle) {
 }
 
 function updateEntity(entity) {
-    entity.updateSprite();
     entity.processSeason(season);
+    entity.updateSprite();
     if (entity.static) {
         return;
     }

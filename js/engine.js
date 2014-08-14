@@ -1,10 +1,10 @@
 (function() {
 window.engine = {
     offScreen : function(entity) {
-        return entity.x + entity.width < 0 || entity.y + entity.height < 0 || entity.x > WIDTH || entity.y > HEIGHT;
+        return entity.x + entity.width < 0 || entity.x > WIDTH || entity.y > HEIGHT;
     },
     leavingScreen : function(entity) {
-        return entity.x < 0 || entity.y < 0 || entity.x + entity.width > WIDTH || entity.y + entity.height > HEIGHT;
+        return entity.x < 0 || entity.x + entity.width > WIDTH || entity.y + entity.height > HEIGHT;
     },
     tileUnder : tileUnder,
     move : function(entity, dx, dy) {
@@ -16,9 +16,17 @@ window.engine = {
             entity.x = entity.x + (dx > 0 ? 1 : -1);
             collisions = getCollisions(collisions, entity, dx > 0 ? DIR.RIGHT : DIR.LEFT);
             if (!collisions.empty()) {
-                if (collisions.hard(true, dx > 0) && !entity.forceMovement()) {
-                    entity.x = entity.x + (dx > 0 ? - 1 : 1);
-                    break;
+                if (collisions.hard(true, dx > 0)) {
+                    if (entity.forceMovement()) {
+                        collisions.list().forEach(function(object) {
+                            if (object.static) return;
+                            //object.move(entity, dx > 0 ? 1 : -1, 0);
+                            object.x = object.x + (dx > 0 ? 1 : -1);
+                        });
+                    } else {
+                        entity.x = entity.x + (dx > 0 ? - 1 : 1);
+                        break;
+                    }
                 }
             }
         }
@@ -26,9 +34,17 @@ window.engine = {
             entity.y = entity.y + (dy > 0 ? 1 : -1);
             collisions = getCollisions(collisions, entity, dy > 0 ? DIR.BOTTOM : DIR.TOP);
             if (!collisions.empty()) {
-                if (collisions.hard(false, dy > 0) && !entity.forceMovement()) {
-                    entity.y = entity.y + (dy > 0 ? - 1 : 1);
-                    break;
+                if (collisions.hard(false, dy > 0)) {
+                    if (entity.forceMovement()) {
+                        collisions.list().forEach(function(object) {
+                            if (object.static) return;
+                            //object.move(entity, 0, dy > 0 ? 1 : -1);
+                            object.y = object.y + (dy > 0 ? 1 : -1);
+                        });
+                    } else {
+                        entity.y = entity.y + (dy > 0 ? - 1 : 1);
+                        break;
+                    }
                 }
             }
             if (dy < 0 && y > 0) {

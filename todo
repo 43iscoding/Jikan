@@ -12,14 +12,13 @@ Autumn:
 Winter:
 .Hibernate/Freeze gradually
 
-Engine 2.0:
-.Sunflower (growing platform push)
+Bugs:
+.If collisions from opposite sides -> die (flower pushes to ceiling)
 
 Content:
 .Carnivorous plants
 .Rooting liana
 .Season change ticks
-.Sunflower should grow non-instantly
 .Bear should enrage when Winter -> Summer
 .Water interaction/Drowning
 
