@@ -41,6 +41,8 @@ function tick() {
     var from = currentTime();
     counter++;
     if (player.dead) {
+        update();
+        render(objects, particles);
         setTimeout(init, 500);
         return;
     }
