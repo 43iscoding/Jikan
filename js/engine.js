@@ -6,16 +6,15 @@ window.engine = {
     leavingScreen : function(entity) {
         return entity.x < 0 || entity.y < 0 || entity.x + entity.width > WIDTH || entity.y + entity.height > HEIGHT;
     },
-    collision : collision,
     tileUnder : tileUnder,
     move : function(entity, dx, dy) {
         var collisions = new Collision(entity);
-        collisions = getCollisions(collisions, entity);
+        collisions = getCollisions(collisions, entity, DIR.INSIDE);
         if (collisions.hard()) return collisions;
 
         for (var x = 0; x < Math.abs(dx); x++) {
             entity.x = entity.x + (dx > 0 ? 1 : -1);
-            collisions = getCollisions(collisions, entity);
+            collisions = getCollisions(collisions, entity, dx > 0 ? DIR.RIGHT : DIR.LEFT);
             if (!collisions.empty()) {
                 if (collisions.hard(true, dx > 0)) {
                     entity.x = entity.x + (dx > 0 ? - 1 : 1);
@@ -25,7 +24,7 @@ window.engine = {
         }
         for (var y = 0; y < Math.abs(dy); y++) {
             entity.y = entity.y + (dy > 0 ? 1 : -1);
-            collisions = getCollisions(collisions, entity);
+            collisions = getCollisions(collisions, entity, dy > 0 ? DIR.BOTTOM : DIR.TOP);
             if (!collisions.empty()) {
                 if (collisions.hard(false, dy > 0)) {
                     entity.y = entity.y + (dy > 0 ? - 1 : 1);
@@ -147,11 +146,12 @@ Collision.prototype = {
 
 
 
-function getCollisions(collisions, entity) {
+function getCollisions(collisions, entity, dir) {
     getObjects().forEach(function(object) {
         if (object == entity) return;
-        var collide = collision(entity, object);
-        if (collide) {
+        var collide = collision(entity, object, dir);
+        if (collide && object.type[1] > collisions[collide].type[1]) {
+            //entity.type[1] is collision priority
             collisions[collide] = object;
         }
     });
@@ -195,21 +195,43 @@ function intersect(x1, y1, w1, h1, x2, y2, w2, h2) {
              (y1 + h1 - 1 < y2));
 }
 
-function collision(entity1, entity2) {
+function collision(entity1, entity2, dir) {
     if (!intersect(entity1.x, entity1.y, entity1.width, entity1.height,
         entity2.x, entity2.y, entity2.width, entity2.height)) return false;
-    if (entity1.x + entity1.width - 1 == entity2.x) {
-        return DIR.RIGHT;
-    } else if (entity2.x + entity2.width - 1 == entity1.x) {
-        return DIR.LEFT;
-    } else if (entity1.y + entity1.height - 1 == entity2.y) {
-        return DIR.BOTTOM;
-    } else if (entity2.y + entity2.height - 1 == entity1.y) {
-        return DIR.TOP;
-    } else {
-        return DIR.INSIDE;
-    }
 
+    //console.log("collision between " + entity1.type + " and " + entity2.type + " -> " + dir);
+    switch (dir) {
+        case DIR.RIGHT : return checkCollision(entity1, entity2, [DIR.RIGHT, DIR.LEFT, DIR.TOP, DIR.BOTTOM]);
+        case DIR.LEFT : return checkCollision(entity1, entity2, [DIR.LEFT, DIR.RIGHT, DIR.TOP, DIR.BOTTOM]);
+        case DIR.TOP : return checkCollision(entity1, entity2, [DIR.TOP, DIR.BOTTOM, DIR.LEFT, DIR.RIGHT]);
+        case DIR.BOTTOM : return checkCollision(entity1, entity2, [DIR.BOTTOM, DIR.TOP, DIR.LEFT, DIR.RIGHT]);
+        case DIR.INSIDE : return checkCollision(entity1, entity2, [DIR.RIGHT, DIR.LEFT, DIR.TOP, DIR.BOTTOM]);
+        default : {
+            console.log('collision(): unknown dir: ' + dir);
+            return DIR.INSIDE;
+        }
+    }
 }
+
+function checkCollision(entity1, entity2, directions) {
+    for (var i = 0; i < directions.length; i++) {
+        if (checkCollisionDirection(entity1, entity2, directions[i])) return directions[i];
+    }
+    return DIR.INSIDE;
+}
+
+function checkCollisionDirection(entity1, entity2, direction) {
+    switch (direction) {
+        case DIR.RIGHT : return entity1.x + entity1.width - 1 == entity2.x;
+        case DIR.LEFT : return entity2.x + entity2.width - 1 == entity1.x;
+        case DIR.TOP : return entity2.y + entity2.height - 1 == entity1.y;
+        case DIR.BOTTOM : return entity1.y + entity1.height - 1 == entity2.y;
+        default : {
+            console.log('unknown collision checking pattern: ' + direction);
+            return false;
+        }
+    }
+}
+
 
 }());

@@ -23,20 +23,20 @@ window.STATE = {
 };
 
 window.TYPE = {
-    DUMMY : 'DUMMY',
-    PLAYER : 'PLAYER',
-    BLOCK : 'BLOCK',
-    WATER : 'WATER',
-    ICE : 'ICE',
-    GROUND : 'GROUND',
-    SPIKE : 'SPIKE',
-    SUNFLOWER : 'SUNFLOWER',
-    FINISH : 'FINISH',
-    BEAR : 'BEAR',
+    //[name, collision-priority]
+    DUMMY : ['DUMMY', -1],
+    PLAYER : ['PLAYER', 0],
+    WATER : ['WATER', 0],
+    ICE : ['ICE', 0],
+    GROUND : ['GROUND', 1],
+    SPIKE : ['SPIKE', 0],
+    SUNFLOWER : ['SUNFLOWER', 0],
+    FINISH : ['FINISH', 2],
+    BEAR : ['BEAR', 0],
     PARTICLE : {
-        SLEEP : 'SLEEP',
-        SNOW : 'SNOW',
-        WIND : 'WIND'
+        SLEEP : ['SLEEP', -1],
+        SNOW : ['SNOW', -1],
+        WIND : ['WIND', -1]
     }
 };
 
@@ -479,7 +479,8 @@ function ParticleSnow(x, y) {
 }
 ParticleSnow.prototype = Object.create(Particle.prototype);
 ParticleSnow.prototype.destroyOnCollision = function(entity) {
-    return entity.type == TYPE.PLAYER || entity.type == TYPE.BEAR || entity.type == TYPE.WATER;
+    return entity.type == TYPE.PLAYER || entity.type == TYPE.BEAR ||
+           entity.type == TYPE.WATER || entity.type == TYPE.SPIKE;
 };
 ParticleSnow.prototype.stopOnCollision = function(entity) {
     return entity.type == TYPE.GROUND || entity.type == TYPE.ICE;

@@ -181,7 +181,7 @@ function updateEntity(entity) {
         levelComplete = true;
     }
 
-    if (!entity.grounded) entity.grounded = collisions.bottom().isPlatform();
+    entity.grounded = collisions.bottom().isPlatform();
 
     if (collisions.bottom().type != TYPE.ICE) {
         entity.applyFriction(FRICTION);
