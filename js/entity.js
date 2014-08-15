@@ -92,6 +92,7 @@ Entity.prototype = {
     },
     die : function() {
         this.dead = true;
+        this.static = true;
         this.updateSprite();
     },
     isPlatform : function() {
@@ -298,7 +299,7 @@ Sunflower.prototype.forceMovement = function() {
     return true;
 };
 Sunflower.prototype.processSpring = function(already) {
-    if (this.processedSeason != SEASON.WINTER) return true;
+    if (already) return true;
 
     if (this.height == TILE_SIZE && this.growCounter > 0) {
         this.growCounter = 0;

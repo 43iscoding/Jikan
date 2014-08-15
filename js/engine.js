@@ -7,21 +7,20 @@ window.engine = {
         return entity.x < 0 || entity.x + entity.width > WIDTH || entity.y + entity.height > HEIGHT;
     },
     tileUnder : tileUnder,
-    move : function(entity, dx, dy) {
+    move : function(entity, dx, dy, args) {
+        var force = entity.forceMovement() || (args && args['force']);
         var collisions = new Collision(entity);
-        collisions = getCollisions(collisions, entity, DIR.INSIDE);
-        if (collisions.hard() && !entity.forceMovement()) return collisions;
+        if (!force) collisions = getCollisions(collisions, entity, DIR.INSIDE);
+        if (collisions.hard()) return collisions;
 
         for (var x = 0; x < Math.abs(dx); x++) {
             entity.x = entity.x + (dx > 0 ? 1 : -1);
             collisions = getCollisions(collisions, entity, dx > 0 ? DIR.RIGHT : DIR.LEFT);
             if (!collisions.empty()) {
                 if (collisions.hard(true, dx > 0)) {
-                    if (entity.forceMovement()) {
+                    if (force) {
                         collisions.list().forEach(function(object) {
-                            if (object.static) return;
-                            //object.move(entity, dx > 0 ? 1 : -1, 0);
-                            object.x = object.x + (dx > 0 ? 1 : -1);
+                            push(object, dx > 0 ? 1 : - 1, 0);
                         });
                     } else {
                         entity.x = entity.x + (dx > 0 ? - 1 : 1);
@@ -35,11 +34,9 @@ window.engine = {
             collisions = getCollisions(collisions, entity, dy > 0 ? DIR.BOTTOM : DIR.TOP);
             if (!collisions.empty()) {
                 if (collisions.hard(false, dy > 0)) {
-                    if (entity.forceMovement()) {
+                    if (force) {
                         collisions.list().forEach(function(object) {
-                            if (object.static) return;
-                            //object.move(entity, 0, dy > 0 ? 1 : -1);
-                            object.y = object.y + (dy > 0 ? 1 : -1);
+                            push(object, 0, dy > 0 ? 1 : - 1);
                         });
                     } else {
                         entity.y = entity.y + (dy > 0 ? - 1 : 1);
@@ -54,6 +51,14 @@ window.engine = {
         return collisions;
     }
 };
+
+function push(object, x, y) {
+    if (object.static) return;
+    var cls = engine.move(object, x, y, {force : true});
+    if (!cls.empty()) {
+        object.die();
+    }
+}
 
 window.DIR = {
     RIGHT : 'RIGHT',
@@ -149,7 +154,7 @@ Collision.prototype = {
                (this.inside().type == type);
     },
     toString : function() {
-        return this.entity.type + '-collision{' +
+        return this.entity.type[0] + '-collision{' +
             (this.left() == DUMMY_CELL ? '' : ' left: ' + this.left().type) +
             (this.right() == DUMMY_CELL ? '' : ' right: ' + this.right().type) +
             (this.top() == DUMMY_CELL ? '' : ' top: ' + this.top().type) +
@@ -200,7 +205,6 @@ function effect(entity, withEntity) {
     if (entity.static || entity == DUMMY_CELL) return;
     if (withEntity.isFatal()) {
         entity.die();
-        entity.static = true;
     }
 }
 

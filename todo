@@ -12,9 +12,6 @@ Autumn:
 Winter:
 .Hibernate/Freeze gradually
 
-Bugs:
-.If collisions from opposite sides -> die (flower pushes to ceiling)
-
 Content:
 .Carnivorous plants
 .Rooting liana
