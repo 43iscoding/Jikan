@@ -457,10 +457,10 @@ Spike.prototype.isFatal = function() {
 
 function Coin(x, y) {
     var frames = [];
-    frames[STATE.IDLE] = [0,1,2];
+    frames[STATE.IDLE] = [0,1,2,3,4,5];
     var args = { static : true };
-    Entity.call(this, x, y, TILE_SIZE, TILE_SIZE, TYPE.COIN,
-        { name : "tiles", pos: [0, TILE_SIZE * 3], frames: frames, speed: 1}, args);
+    Entity.call(this, x, y, 10, 21, TYPE.COIN,
+        { name : "tiles", pos: [TILE_SIZE * 3, TILE_SIZE * 2], frames: frames, speed: 2}, args);
 }
 Coin.prototype = Object.create(Entity.prototype);
 Coin.prototype.getState = function() {

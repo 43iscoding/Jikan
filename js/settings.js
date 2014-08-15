@@ -6,7 +6,7 @@
 
     window.TILE_SIZE = 32;
 
-    window.DEBUG = true;
+    window.DEBUG = false;
 
     window.cookie = {
         MUTED : "muted",
