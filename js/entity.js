@@ -31,6 +31,7 @@ window.TYPE = {
     GROUND : ['GROUND', 2],
     SPIKE : ['SPIKE', 0],
     SUNFLOWER : ['SUNFLOWER', 1],
+    COIN : ['COIN', 1],
     FINISH : ['FINISH', 0],
     BEAR : ['BEAR', 1],
     PARTICLE : {
@@ -153,6 +154,9 @@ Entity.prototype = {
         this.ySpeed = Math.min(this.ySpeed + gravity, FREE_FALL);
     },
     forceMovement : function() {
+        return false;
+    },
+    destroyOnCollision : function(entity) {
         return false;
     },
     processSeason : function(season) {
@@ -451,6 +455,21 @@ Spike.prototype.isFatal = function() {
     return true;
 };
 
+function Coin(x, y) {
+    var frames = [];
+    frames[STATE.IDLE] = [0,1,2];
+    var args = { static : true };
+    Entity.call(this, x, y, TILE_SIZE, TILE_SIZE, TYPE.COIN,
+        { name : "tiles", pos: [0, TILE_SIZE * 3], frames: frames, speed: 1}, args);
+}
+Coin.prototype = Object.create(Entity.prototype);
+Coin.prototype.getState = function() {
+    return STATE.IDLE;
+};
+Coin.prototype.destroyOnCollision = function(entity) {
+    return entity.type == TYPE.PLAYER;
+};
+
 /****************************************************
                         Particle
  ****************************************************/
@@ -467,9 +486,6 @@ Particle.prototype.getState = function() {
 };
 Particle.prototype.canLeaveScreen = function() {
     return true;
-};
-Particle.prototype.destroyOnCollision = function(entity) {
-    return false;
 };
 Particle.prototype.stopOnCollision = function(entity) {
     return false;
@@ -564,6 +580,7 @@ window.spawn = function(type, x, y, style) {
         case TYPE.PARTICLE.SNOW: return new ParticleSnow(x, y);
         case TYPE.PARTICLE.WIND: return new ParticleWind(x, y);
         case TYPE.FINISH : return new Finish(x, y);
+        case TYPE.COIN : return new Coin(x, y);
         default: {
             console.log("Cannot spawn: unknown type - " + type);
         }

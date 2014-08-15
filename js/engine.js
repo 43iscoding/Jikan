@@ -202,6 +202,9 @@ function collisionEffect(entity1, entity2) {
 }
 
 function effect(entity, withEntity) {
+    if (entity.destroyOnCollision(withEntity)) {
+        getObjects().splice(getObjects().indexOf(entity), 1);
+    }
     if (entity.static || entity == DUMMY_CELL) return;
     if (withEntity.isFatal()) {
         entity.die();

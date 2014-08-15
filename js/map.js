@@ -8,7 +8,8 @@
         SUNFLOWER : 'T',
         BEAR : 'B',
         FINISH : 'F',
-        SPIKE : '^'
+        SPIKE : '^',
+        COIN : 'c'
     };
 
     var LEVEL_0 = "10W8H" +
@@ -72,7 +73,7 @@
         "---####---";
 
     var LEVEL_6 = "10W8H" +
-        ".......F.." +
+        "..c....F.." +
         "..-....-.." +
         "..-....-.." +
         "..-....-.T" +
@@ -133,6 +134,7 @@
                 case TILE.PLAYER: type = TYPE.PLAYER; break;
                 case TILE.FINISH: type = TYPE.FINISH; break;
                 case TILE.SPIKE: type = TYPE.SPIKE; break;
+                case TILE.COIN: type = TYPE.COIN; break;
                 case TILE.GROUND: {
                     type = TYPE.GROUND;
                     if (this.get(x, y - 1) == TILE.GROUND) {
