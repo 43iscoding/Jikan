@@ -18,6 +18,9 @@ Content:
 .Season change ticks
 .Bear should enrage when Winter -> Summer
 .Water interaction/Drowning
+.Variable length sunflowers
+.Camera/Wide levels
+.Fix movement (slower acceleration)
 
 Coins:
 .UI

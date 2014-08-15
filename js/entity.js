@@ -306,7 +306,6 @@ Sunflower.prototype.processSpring = function(already) {
     if (already) return true;
 
     if (this.height == TILE_SIZE && this.growCounter > 0) {
-        this.growCounter = 0;
         return true;
     } else if (this.growCounter == 0) {
         this.y = this.baseY + TILE_SIZE;
@@ -324,7 +323,7 @@ Sunflower.prototype.processSpring = function(already) {
     return false;
 };
 Sunflower.prototype.processSummer = function(already) {
-    return true;//this.wither = false; return true;
+    return this.processSpring(already);
 };
 Sunflower.prototype.processWinter = function(already) {
     this.y = this.baseY;
