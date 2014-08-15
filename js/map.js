@@ -100,8 +100,12 @@
         return currentLevel;
     };
 
-    window.advanceLevel = function() {
+    window.nextLevel = function() {
         currentLevel = ++currentLevel % MAPS.length;
+    };
+
+    window.previousLevel = function() {
+        if (--currentLevel < 0) currentLevel = MAPS.length - 1;
     };
 
     window.getMap = function() {

@@ -135,10 +135,10 @@ Entity.prototype = {
         context.restore();
     },
     moveRight : function(ratio) {
-        this.xSpeed = Math.min(this.xSpeed + this.velocity * ratio, this.velocity);
+        this.xSpeed = Math.min(this.xSpeed + this.velocity / 5 * ratio, this.velocity);
     },
     moveLeft : function(ratio) {
-        this.xSpeed = Math.max(this.xSpeed - this.velocity * ratio, -this.velocity);
+        this.xSpeed = Math.max(this.xSpeed - this.velocity / 5 * ratio, -this.velocity);
     },
     jump : function() {
         this.ySpeed = -this.jumpSpeed;

@@ -115,6 +115,8 @@
 
             TILDE: {key: '~', code: 192},
 
+            LEFT_BRACKET: {key: '[', code: 219}, RIGHT_BRACKET: {key: ']', code: 221},
+
             NUM1: {key: 'NUM1', code: 97}, NUM6: {key: 'NUM6', code: 102},
             NUM2: {key: 'NUM2', code: 98}, NUM7: {key: 'NUM7', code: 103},
             NUM3: {key: 'NUM3', code: 99}, NUM8: {key: 'NUM8', code: 104},

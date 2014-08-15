@@ -56,7 +56,7 @@ function tick() {
 function processInput() {
     if (levelComplete) return;
     //movement
-    var movementRatio = engine.tileUnder(player).type == TYPE.ICE ? ICE_SLIDING : 1;
+    var movementRatio = player.onIce ? ICE_SLIDING : 1;
     if (input.isPressed(input.keys.RIGHT.key)) {
         player.moveRight(movementRatio);
     } else if (input.isPressed(input.keys.LEFT.key)) {
@@ -83,6 +83,16 @@ function processInput() {
     if (input.isPressed(input.keys.F.key)) {
         input.clearInput(input.keys.F.key);
         loader.toggleFullscreen();
+    }
+    if (input.isPressed(input.keys.LEFT_BRACKET.key)) {
+        input.clearInput(input.keys.LEFT_BRACKET.key);
+        previousLevel();
+        startLevel();
+    }
+    if (input.isPressed(input.keys.RIGHT_BRACKET.key)) {
+        input.clearInput(input.keys.RIGHT_BRACKET.key);
+        nextLevel();
+        startLevel();
     }
 }
 
@@ -130,7 +140,7 @@ function update() {
 function win() {
     if (winTimer != null) return;
     winTimer = setTimeout(function() {
-        advanceLevel();
+        nextLevel();
         startLevel();
         winTimer = null;
     }, 1000);
@@ -184,6 +194,7 @@ function updateEntity(entity) {
     }
 
     entity.grounded = collisions.bottom().isPlatform();
+    entity.onIce = collisions.bottom().type == TYPE.ICE;
 
     if (collisions.bottom().type != TYPE.ICE) {
         entity.applyFriction(FRICTION);

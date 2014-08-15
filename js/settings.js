@@ -16,7 +16,7 @@
     window.GRAVITY = 0.12;
     window.FREE_FALL = 5;
     window.FRICTION = 0.15;
-    window.ICE_SLIDING = 0.05;
+    window.ICE_SLIDING = 0.37;
 
     window.SEASON = {
         SPRING : 'Spring',
