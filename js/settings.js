@@ -25,6 +25,8 @@
         WINTER : 'Winter'
     };
 
+    window.SEASON_COOLDOWN = 1000;
+
     window.DEFAULT_SEASON = SEASON.SUMMER;
 
     window.PIXEL_RATIO = function () {

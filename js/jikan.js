@@ -33,6 +33,7 @@ function startLevel() {
     levelComplete = false;
     season = DEFAULT_SEASON;
     objects = parseMap(getMap());
+    lastSeasonChange = 0;
     particles = [];
 }
 
@@ -96,8 +97,13 @@ function processInput() {
     }
 }
 
+var lastSeasonChange = 0;
+
 function changeSeason(newSeason) {
     if (newSeason == season) return;
+    var time = new Date().getTime();
+    if (time < lastSeasonChange + SEASON_COOLDOWN) return;
+    lastSeasonChange = time;
     season = newSeason;
 }
 

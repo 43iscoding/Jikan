@@ -8,7 +8,7 @@
         initScreen(document.getElementById('canvas'), WIDTH * 2, HEIGHT * 2);
         initScreen(document.getElementById('buffer'), WIDTH, HEIGHT);
         res.onReady(loaded);
-        res.load(['player', 'tiles', 'bear', 'background', 'particles']);
+        res.load(['player', 'tiles', 'bear', 'background', 'particles', 'ui']);
     }
 
     function initScreen(canvas, width, height) {

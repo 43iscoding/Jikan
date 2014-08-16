@@ -65,15 +65,34 @@ function renderBackground() {
     bufferContext.drawImage(res.get('background'), player.x / 4, 0, WIDTH, HEIGHT, 0, 0, WIDTH, HEIGHT);
 }
 
+var seasonCenter = {x: 20, y : 20};
+
+function getSeasonUIAngle() {
+    switch (getSeason()) {
+        case SEASON.AUTUMN: return Math.PI     / 4;
+        case SEASON.WINTER: return Math.PI * 3 / 4;
+        case SEASON.SPRING: return Math.PI * 5 / 4;
+        case SEASON.SUMMER: return Math.PI * 7 / 4;
+        default: {
+            console.log('Unknown season: ' + getSeason());
+            return Math.PI / 4;
+        }
+    }
+}
+
 function renderUI() {
     //season
-    bufferContext.textAlign = "center";
-    bufferContext.font = '19px Aoyagi bold';
+    bufferContext.drawImage(res.get('ui'), 0, 0, TILE_SIZE, TILE_SIZE, seasonCenter.x - 16, seasonCenter.y - 16, TILE_SIZE, TILE_SIZE);
 
-    bufferContext.fillStyle = "#00005A";
-    bufferContext.fillText(getSeason(), WIDTH / 9 * 8 + 1, HEIGHT / 17 - 1);
-    bufferContext.fillStyle = "#DDB500";
-    bufferContext.fillText(getSeason(), WIDTH / 9 * 8, HEIGHT / 17);
+    bufferContext.fillStyle = 'rgba(0,0,0,0.6)';
+    bufferContext.beginPath();
+    bufferContext.moveTo(seasonCenter.x, seasonCenter.y);
+    bufferContext.arc(seasonCenter.x, seasonCenter.y, 16, getSeasonUIAngle(), getSeasonUIAngle() + Math.PI * 3 / 2);
+    bufferContext.lineTo(seasonCenter.x, seasonCenter.y);
+    bufferContext.closePath();
+    bufferContext.fill();
+
+    bufferContext.drawImage(res.get('ui'), TILE_SIZE * 2, 0, 6, 6, seasonCenter.x - 3, seasonCenter.y - 3, 6, 6);
 
     if (levelComplete()) {
         bufferContext.font = "30px Aoyagi bold";
