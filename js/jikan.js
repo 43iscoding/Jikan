@@ -99,6 +99,12 @@ function processInput() {
 
 var lastSeasonChange = 0;
 
+window.getSeasonCD = function() {
+    var delta = new Date().getTime() - lastSeasonChange;
+    var ratio = delta / SEASON_COOLDOWN;
+    return ratio < 0 ? 0 : (ratio > 1 ? 1 : ratio);
+};
+
 function changeSeason(newSeason) {
     if (newSeason == season) return;
     var time = new Date().getTime();

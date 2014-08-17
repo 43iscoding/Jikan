@@ -65,7 +65,7 @@ function renderBackground() {
     bufferContext.drawImage(res.get('background'), player.x / 4, 0, WIDTH, HEIGHT, 0, 0, WIDTH, HEIGHT);
 }
 
-var seasonCenter = {x: 20, y : 20};
+var seasonCenter = {x: 24, y : 24};
 
 function getSeasonUIAngle() {
     switch (getSeason()) {
@@ -80,10 +80,28 @@ function getSeasonUIAngle() {
     }
 }
 
+function getSeasonCooldownAngle() {
+    return -Math.PI / 2 + getSeasonCD() * Math.PI * 2;
+}
+
 function renderUI() {
     //season
-    bufferContext.drawImage(res.get('ui'), 0, 0, TILE_SIZE, TILE_SIZE, seasonCenter.x - 16, seasonCenter.y - 16, TILE_SIZE, TILE_SIZE);
 
+    //cooldown
+    if (getSeasonCD() != 1) {
+        bufferContext.fillStyle = '#666';
+        bufferContext.beginPath();
+        bufferContext.moveTo(seasonCenter.x, seasonCenter.y);
+        bufferContext.arc(seasonCenter.x, seasonCenter.y, 18, getSeasonCooldownAngle(), -Math.PI / 2);
+        bufferContext.lineTo(seasonCenter.x, seasonCenter.y);
+        bufferContext.closePath();
+        bufferContext.fill();
+    }
+
+    //wheel itself
+    bufferContext.drawImage(res.get('ui'), 0, 0, 36, 36, seasonCenter.x - 18, seasonCenter.y - 18, 36, 36);
+
+    //shade all sectors except active
     bufferContext.fillStyle = 'rgba(0,0,0,0.6)';
     bufferContext.beginPath();
     bufferContext.moveTo(seasonCenter.x, seasonCenter.y);
